@@ -1,0 +1,71 @@
+name: Compilar Dal
+on:
+  push:
+    branches:
+      - "main"
+      - "test"
+      - "dev"
+jobs:
+  build:
+    runs-on: [self-hosted, '${{ github.ref_name }}']
+    env:
+      solution: Log.Dal
+      version: 1.0.${{ github.run_number }}
+      versionSuffix: ${{ github.ref_name }}
+      username: leandrobaena@gmail.com
+      mysql-user: test
+      mysql-pass: Golden*2023
+      sonarQubeKey: sqa_c24b73b519e482496ce1070a56f68c87a1c384c5
+    steps:
+    - name: Descarga del código
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Eliminar repositorio previo
+      continue-on-error: true
+      run: dotnet nuget remove source github
+
+    - name: Adicionar repositorio
+      run: dotnet nuget add source --username ${{ env.username }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/inglesefe/index.json"
+
+    - name: Inicializar SonarQube
+      if: ${{ github.ref_name == 'dev' }}
+      run: dotnet sonarscanner begin /k:"${{ env.solution }}" /d:sonar.host.url="http://localhost:9000"  /d:sonar.login="${{ env.sonarQubeKey }}" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+
+    - name: Compilar la solución
+      if: ${{ github.ref_name == 'dev' }}
+      run: dotnet build ${{ env.solution }}.sln -c Debug --no-incremental
+
+    - name: Compilar la solución
+      if: ${{ github.ref_name == 'test' || github.ref_name == 'main' }}
+      run: dotnet build ${{ env.solution }}.sln -c Release
+
+    - name: Crear base de datos de prueba
+      if: ${{ github.ref_name == 'dev' }}
+      shell: cmd
+      run: mysql -h localhost -P 3306 -u ${{ env.mysql-user }} -p${{ env.mysql-pass }} < "${{ github.workspace }}\${{ env.solution }}.Test\db-test.sql"
+
+    - name: Ejecutar pruebas unitarias
+      if: ${{ github.ref_name == 'dev' }}
+      run: dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
+
+    - name: Finalizar SonarQube
+      if: ${{ github.ref_name == 'dev' }}
+      run: dotnet sonarscanner end /d:sonar.login="${{ env.sonarQubeKey }}"
+
+    - name: Crear el paquete Nuget
+      if: ${{ github.ref_name == 'dev' || github.ref_name == 'test' }}
+      run: dotnet pack -c Release -p:PackageVersion=${{ env.version }}-${{ env.versionSuffix }} ${{ env.solution }}.sln
+
+    - name: Crear el paquete Nuget
+      if: ${{ github.ref_name == 'main' }}
+      run: dotnet pack -c Release -p:PackageVersion=${{ env.version }} ${{ env.solution }}.sln
+
+    - name: Construir artefacto dev
+      if: ${{ github.ref_name == 'dev' || github.ref_name == 'test' }}
+      run: dotnet nuget push ${{ env.solution }}/bin/Release/${{ env.solution }}.${{ env.version }}-${{ env.versionSuffix }}.nupkg  --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/inglesefe/index.json"
+
+    - name: Construir artefacto
+      if: ${{ github.ref_name == 'main' }}
+      run: dotnet nuget push ${{ env.solution }}/bin/Release/${{ env.solution }}.${{ env.version }}.nupkg  --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/inglesefe/index.json"
