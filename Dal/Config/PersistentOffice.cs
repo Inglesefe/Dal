@@ -1,0 +1,197 @@
+﻿using Dal.Dto;
+using Dal.Exceptions;
+using Dal.Utils;
+using Dapper;
+using Entities.Auth;
+using Entities.Config;
+using System.Data;
+
+namespace Dal.Config
+{
+    /// <summary>
+    /// Realiza la persistencia de las oficinas en la base de datos
+    /// </summary>
+    public class PersistentOffice : PersistentBaseWithLog<Office>
+    {
+        #region Constructors
+        /// <summary>
+        /// Inicializa la conexión a la bse de datos
+        /// </summary>
+        /// <param name="connection">Conexión a la base de datos</param>
+        public PersistentOffice(IDbConnection connection) : base(connection) { }
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Trae un listado de oficinas desde la base de datos
+        /// </summary>
+        /// <param name="filters">Filtros aplicados a la consulta</param>
+        /// <param name="orders">Ordenamientos aplicados a la base de datos</param>
+        /// <param name="limit">Límite de registros a traer</param>
+        /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
+        /// <returns>Listado de oficinas</returns>
+        /// <exception cref="PersistentException">Si hubo una excepción al consultar las oficinas</exception>
+        public override ListResult<Office> List(string filters, string orders, int limit, int offset)
+        {
+            ListResult<Office> result;
+            try
+            {
+                QueryBuilder queryBuilder = new(
+                    "o.idoffice AS id, o.name as name, o.address as address, ci.idcity as id, ci.name as name, ci.code as code, co.idcountry as id, co.name as name, co.code as code",
+                    "office o inner join city ci on o.idcity = ci.idcity inner join country co on ci.idcountry = co.idcountry");
+                OpenConnection();
+                List<Office> offices = _connection.Query<Office>(
+                    queryBuilder.GetSelectForList(filters, orders, limit, offset),
+                    new[]
+                    {
+                        typeof(Office),
+                        typeof(City),
+                        typeof(Country)
+                    },
+                    objects =>
+                    {
+                        Office o = objects[0] as Office;
+                        City ci = objects[1] as City;
+                        Country co = objects[2] as Country;
+                        ci.Country = co;
+                        o.City = ci;
+                        return o;
+                    },
+                    splitOn: "id"
+                    ).ToList();
+                int total = _connection.ExecuteScalar<int>(queryBuilder.GetCountTotalSelectForList(filters, orders));
+                result = new(offices, total);
+            }
+            catch (Exception ex)
+            {
+                throw new PersistentException("Error al consultar el listado de oficinas", ex);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Consulta una oficina dado su identificador
+        /// </summary>
+        /// <param name="entity">Oficina a consultar</param>
+        /// <returns>Oficina con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
+        /// <exception cref="PersistentException">Si hubo una excepción al consultar la oficina</exception>
+        public override Office Read(Office entity)
+        {
+            try
+            {
+                OpenConnection();
+                return _connection.Query<Office>(
+                    "SELECT o.idoffice AS id, o.name as name, o.address as address, ci.idcity as id, ci.name as name, ci.code as code, co.idcountry as id, co.name as name, co.code as code " +
+                    "FROM office o inner join city ci on o.idcity = ci.idcity inner join country co on ci.idcountry = co.idcountry WHERE o.idoffice = " + entity.Id,
+                    new[]
+                    {
+                        typeof(Office),
+                        typeof(City),
+                        typeof(Country)
+                    },
+                    objects =>
+                    {
+                        Office o = objects[0] as Office;
+                        City ci = objects[1] as City;
+                        Country co = objects[2] as Country;
+                        ci.Country = co;
+                        o.City = ci;
+                        return o;
+                    },
+                    splitOn: "id").FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new PersistentException("Error al consultar la aplicación", ex);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+        }
+
+        /// <summary>
+        /// Inserta una oficina en la base de datos
+        /// </summary>
+        /// <param name="entity">Oficina a insertar</param>
+        /// <param name="user">Usuario que realiza la inserción</param>
+        /// <returns>Oficina insertada con el id generado por la base de datos</returns>
+        /// <exception cref="PersistentException">Si hubo una excepción al insertar la oficina</exception>
+        public override Office Insert(Office entity, User user)
+        {
+            try
+            {
+                OpenConnection();
+                entity.Id = _connection.QuerySingle<int>("INSERT INTO office (idcity, name, address) VALUES (@IdCity, @Name, @Address); SELECT LAST_INSERT_ID();",
+                    new { @IdCity = entity.City.Id, entity.Name, entity.Address });
+                LogInsert(entity.Id, "office", "INSERT INTO office (idcity, name, address) VALUES (" + entity.City.Id + ", '" + entity.Name + "', '" + entity.Address + "')", user.Id);
+            }
+            catch (Exception ex)
+            {
+                throw new PersistentException("Error al insertar la oficina", ex);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+            return entity;
+        }
+
+        /// <summary>
+        /// Actualiza una oficina en la base de datos
+        /// </summary>
+        /// <param name="entity">Oficina a actualizar</param>
+        /// <param name="user">Usuario que realiza la actualización</param>
+        /// <returns>Oficina actualizada</returns>
+        /// <exception cref="PersistentException">Si hubo una excepción al actualizar la oficina</exception>
+        public override Office Update(Office entity, User user)
+        {
+            try
+            {
+                OpenConnection();
+                _ = _connection.Execute("UPDATE office SET name = @Name, address = Address WHERE idoffice = @Id", entity);
+                LogUpdate(entity.Id, "office", "UPDATE office SET name = '" + entity.Name + "', address = '" + entity.Address + "' WHERE idoffice = " + entity.Id, user.Id);
+            }
+            catch (Exception ex)
+            {
+                throw new PersistentException("Error al actualizar la oficina", ex);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+            return entity;
+        }
+
+        /// <summary>
+        /// Elimina una oficina de la base de datos
+        /// </summary>
+        /// <param name="entity">Oficina a eliminar</param>
+        /// <param name="user">Usuario que realiza la eliminación</param>
+        /// <returns>Oficina eliminada</returns>
+        /// <exception cref="PersistentException">Si hubo una excepción al eliminar la oficina</exception>
+        public override Office Delete(Office entity, User user)
+        {
+            try
+            {
+                OpenConnection();
+                _ = _connection.Execute("DELETE FROM office WHERE idoffice = @Id", entity);
+                LogDelete(entity.Id, "office", "DELETE FROM office WHERE idoffice = " + entity.Id, user.Id);
+            }
+            catch (Exception ex)
+            {
+                throw new PersistentException("Error al eliminar la oficina", ex);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+            return entity;
+        }
+        #endregion
+    }
+}
