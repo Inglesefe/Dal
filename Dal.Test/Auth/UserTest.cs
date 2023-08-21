@@ -176,6 +176,18 @@ namespace Dal.Test.Auth
         }
 
         /// <summary>
+        /// Prueba la consulta de un usuario dado su login que no existe
+        /// </summary>
+        [Fact]
+        public void UserReadByLoginNonExistentTest()
+        {
+            User user = new() { Login = "pepitoperez@inglesefe.com.co" };
+            user = _persistent.ReadByLogin(user);
+
+            Assert.Equal(0, user.Id);
+        }
+
+        /// <summary>
         /// Prueba la consulta de un usuario inactivo dado su login y password
         /// </summary>
         [Fact]
