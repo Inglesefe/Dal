@@ -72,14 +72,23 @@ namespace Dal.Config
             try
             {
                 OpenConnection();
-                return _connection.Query<City, Country, City>(
-                    "SELECT ci.idcity AS id, ci.code as code, ci.name as name, co.idcountry as id, co.name as name, co.code as code FROM city ci inner join country co on ci.idcountry = co.idcountry WHERE ci.idcity = " + entity.Id,
+                IEnumerable<City> result = _connection.Query<City, Country, City>(
+                    "SELECT ci.idcity AS id, ci.code as code, ci.name as name, co.idcountry as id, co.name as name, co.code as code FROM city ci inner join country co on ci.idcountry = co.idcountry WHERE ci.idcity = @Id",
                     (ci, co) =>
                     {
                         ci.Country = co;
                         return ci;
                     },
-                    splitOn: "id").FirstOrDefault();
+                    new { entity.Id },
+                    splitOn: "id");
+                if (result.Any())
+                {
+                    return result.First();
+                }
+                else
+                {
+                    return new();
+                }
             }
             catch (Exception ex)
             {
@@ -103,8 +112,8 @@ namespace Dal.Config
             try
             {
                 OpenConnection();
-                entity.Id = _connection.QuerySingle<int>("INSERT INTO city (idcountry, code, name) VALUES (@IdCountry, @Code, @Name); SELECT LAST_INSERT_ID();",
-                    new { @IdCountry = entity.Country.Id, entity.Code, entity.Name });
+                entity.Id = _connection.QuerySingle<int>("INSERT INTO city (idcountry, code, name) VALUES (@Id, @Code, @Name); SELECT LAST_INSERT_ID();",
+                    new { entity.Country.Id, entity.Code, entity.Name });
                 LogInsert(entity.Id, "city", "INSERT INTO city (idcountry, code, name) VALUES (" + entity.Country.Id + ", '" + entity.Code + "', '" + entity.Name + "')", user.Id);
             }
             catch (Exception ex)

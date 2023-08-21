@@ -64,7 +64,15 @@ namespace Dal.Config
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<Plan>("SELECT idplan AS id, value, initial_fee as initialFee, installments_number as installmentsNumber, installment_value as installmentValue, active FROM plan WHERE idplan = @Id", entity);
+                Plan result = _connection.QuerySingleOrDefault<Plan>("SELECT idplan AS id, value, initial_fee as initialFee, installments_number as installmentsNumber, installment_value as installmentValue, active FROM plan WHERE idplan = @Id", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {

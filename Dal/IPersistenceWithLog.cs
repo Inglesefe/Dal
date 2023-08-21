@@ -1,34 +1,14 @@
 ﻿using Dal.Dto;
 using Entities;
-using System.Data;
+using Entities.Auth;
 
 namespace Dal
 {
     /// <summary>
-    /// Clase base de la jerarquía de persistencias de entidades
+    /// Define los métodos que debe tener toda persistencia
     /// </summary>
-    /// <typeparam name="T">Tipo de la entidad a persistir</typeparam>
-    public abstract class PersistentBase<T> : IPersistence<T> where T : EntityBase
+    public interface IPersistenceWithLog<T> where T : EntityBase
     {
-        #region Attributes
-        /// <summary>
-        /// Conexión a la base de datos
-        /// </summary>
-        protected IDbConnection _connection;
-        #endregion
-
-        #region Constructors
-        /// <summary>
-        /// Inicializa la conexión a la base de datos
-        /// </summary>
-        /// <param name="connection">Conexión a la base de datos</param>
-        protected PersistentBase(IDbConnection connection)
-        {
-            _connection = connection;
-        }
-        #endregion
-
-        #region Methods
         /// <summary>
         /// Trae un listado de registros aplicando filtros, ordenamientos y límites de registros a traer
         /// </summary>
@@ -37,7 +17,7 @@ namespace Dal
         /// <param name="limit">Límite de registros a traer</param>
         /// <param name="offset">Registro inicial desde el que se cuenta el límite de registros</param>
         /// <returns>Listado de registros y el total que traería sin aplicar límites</returns>
-        public abstract ListResult<T> List(string filters, string orders, int limit, int offset);
+        ListResult<T> List(string filters, string orders, int limit, int offset);
 
         /// <summary>
         /// Trae una entidad con los datos cargados desde la base de datos
@@ -52,7 +32,7 @@ namespace Dal
         /// <param name="entity">Entidad a insertar en la base de datos</param>
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Entidad insertada en la base de datos, con el id generado en ella si aplica</returns>
-        public abstract T Insert(T entity);
+        public abstract T Insert(T entity, User user);
 
         /// <summary>
         /// Actualiza una entidad en la base de datos
@@ -60,7 +40,7 @@ namespace Dal
         /// <param name="entity">Entidad a actualizar en la base de datos</param>
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Entidad actualizada en la base de datos</returns>
-        public abstract T Update(T entity);
+        public abstract T Update(T entity, User user);
 
         /// <summary>
         /// Elimina una entidad en la base de datos
@@ -68,29 +48,6 @@ namespace Dal
         /// <param name="entity">Entidad a eliminar en la base de datos</param>
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Entidad eliminada en la base de datos</returns>
-        public abstract T Delete(T entity);
-
-        /// <summary>
-        /// Verifica que si la conexión a la base de datos no está abierta se abra
-        /// </summary>
-        protected void OpenConnection()
-        {
-            if (_connection.State != ConnectionState.Open)
-            {
-                _connection.Open();
-            }
-        }
-
-        /// <summary>
-        /// Verifica que si la conexión a la base de datos no está cerrada se cierre
-        /// </summary>
-        protected void CloseConnection()
-        {
-            if (_connection.State != ConnectionState.Closed)
-            {
-                _connection.Close();
-            }
-        }
-        #endregion
+        public abstract T Delete(T entity, User user);
     }
 }

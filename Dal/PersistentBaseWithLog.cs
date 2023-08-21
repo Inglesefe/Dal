@@ -11,7 +11,7 @@ namespace Dal
     /// Clase base de la jerarquía de persistencias de entidades y que registra un log de auditoría en las inserciones, actualizaciones o eliminaciones
     /// </summary>
     /// <typeparam name="T">Tipo de la entidad a persistir</typeparam>
-    public abstract class PersistentBaseWithLog<T> where T : EntityBase
+    public abstract class PersistentBaseWithLog<T> : IPersistenceWithLog<T> where T : EntityBase
     {
         #region Attributes
         /// <summary>

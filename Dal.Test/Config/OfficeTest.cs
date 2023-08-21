@@ -82,7 +82,7 @@ namespace Dal.Test.Config
             Office office = new() { Id = 10 };
             office = _persistent.Read(office);
 
-            Assert.Null(office);
+            Assert.Equal(0, office.Id);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Dal.Test.Config
             Office office2 = new() { Id = 3 };
             office2 = _persistent.Read(office2);
 
-            Assert.Null(office2);
+            Assert.Equal(0, office2.Id);
         }
         #endregion
     }

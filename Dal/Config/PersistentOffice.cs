@@ -40,7 +40,7 @@ namespace Dal.Config
                     "o.idoffice AS id, o.name as name, o.address as address, ci.idcity as id, ci.name as name, ci.code as code, co.idcountry as id, co.name as name, co.code as code",
                     "office o inner join city ci on o.idcity = ci.idcity inner join country co on ci.idcountry = co.idcountry");
                 OpenConnection();
-                List<Office> offices = _connection.Query<Office>(
+                List<Office> offices = _connection.Query(
                     queryBuilder.GetSelectForList(filters, orders, limit, offset),
                     new[]
                     {
@@ -50,9 +50,9 @@ namespace Dal.Config
                     },
                     objects =>
                     {
-                        Office o = objects[0] as Office;
-                        City ci = objects[1] as City;
-                        Country co = objects[2] as Country;
+                        Office o = (objects[0] as Office) ?? new Office();
+                        City ci = (objects[1] as City) ?? new City();
+                        Country co = (objects[2] as Country) ?? new Country();
                         ci.Country = co;
                         o.City = ci;
                         return o;
@@ -84,9 +84,9 @@ namespace Dal.Config
             try
             {
                 OpenConnection();
-                return _connection.Query<Office>(
+                IEnumerable<Office> result = _connection.Query(
                     "SELECT o.idoffice AS id, o.name as name, o.address as address, ci.idcity as id, ci.name as name, ci.code as code, co.idcountry as id, co.name as name, co.code as code " +
-                    "FROM office o inner join city ci on o.idcity = ci.idcity inner join country co on ci.idcountry = co.idcountry WHERE o.idoffice = " + entity.Id,
+                    "FROM office o inner join city ci on o.idcity = ci.idcity inner join country co on ci.idcountry = co.idcountry WHERE o.idoffice = @Id",
                     new[]
                     {
                         typeof(Office),
@@ -95,14 +95,23 @@ namespace Dal.Config
                     },
                     objects =>
                     {
-                        Office o = objects[0] as Office;
-                        City ci = objects[1] as City;
-                        Country co = objects[2] as Country;
+                        Office o = (objects[0] as Office) ?? new Office();
+                        City ci = (objects[1] as City) ?? new City();
+                        Country co = (objects[2] as Country) ?? new Country();
                         ci.Country = co;
                         o.City = ci;
                         return o;
                     },
-                    splitOn: "id").FirstOrDefault();
+                    entity,
+                    splitOn: "id");
+                if (result.Any())
+                {
+                    return result.First();
+                }
+                else
+                {
+                    return new();
+                }
             }
             catch (Exception ex)
             {

@@ -82,7 +82,7 @@ namespace Dal.Test.Config
             Plan plan = new() { Id = 10 };
             plan = _persistent.Read(plan);
 
-            Assert.Null(plan);
+            Assert.Equal(0, plan.Id);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Dal.Test.Config
             Plan plan2 = new() { Id = 3 };
             plan2 = _persistent.Read(plan2);
 
-            Assert.Null(plan2);
+            Assert.Equal(0, plan2.Id);
         }
         #endregion
     }

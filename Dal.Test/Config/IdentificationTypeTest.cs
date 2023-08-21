@@ -82,7 +82,7 @@ namespace Dal.Test.Config
             IdentificationType identificationType = new() { Id = 10 };
             identificationType = _persistent.Read(identificationType);
 
-            Assert.Null(identificationType);
+            Assert.Equal(0, identificationType.Id);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Dal.Test.Config
             IdentificationType identificationType2 = new() { Id = 3 };
             identificationType2 = _persistent.Read(identificationType2);
 
-            Assert.Null(identificationType2);
+            Assert.Equal(0, identificationType2.Id);
         }
         #endregion
     }

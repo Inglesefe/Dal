@@ -82,7 +82,7 @@ namespace Dal.Test.Config
             City city = new() { Id = 10 };
             city = _persistent.Read(city);
 
-            Assert.Null(city);
+            Assert.Equal(0, city.Id);
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Dal.Test.Config
             City city2 = new() { Id = 3 };
             city2 = _persistent.Read(city2);
 
-            Assert.Null(city2);
+            Assert.Equal(0, city2.Id);
         }
         #endregion
     }

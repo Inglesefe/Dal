@@ -64,7 +64,15 @@ namespace Dal.Noti
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<Notification>("SELECT idnotification AS id, date, `to`, subject, content, iduser as user FROM notification WHERE idnotification = @Id", entity);
+                Notification result = _connection.QuerySingleOrDefault<Notification>("SELECT idnotification AS id, date, `to`, subject, content, iduser as user FROM notification WHERE idnotification = @Id", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {

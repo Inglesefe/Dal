@@ -43,7 +43,6 @@ namespace Dal.Test.Noti
         /// <summary>
         /// Prueba la consulta de un listado de notificaciones con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void NotificationListTest()
         {
@@ -56,7 +55,6 @@ namespace Dal.Test.Noti
         /// <summary>
         /// Prueba la consulta de un listado de notificaciones con filtros, ordenamientos y límite y con errores
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void NotificationListWithErrorTest()
         {
@@ -66,7 +64,6 @@ namespace Dal.Test.Noti
         /// <summary>
         /// Prueba la consulta de una notificación dado su identificador
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void NotificationReadTest()
         {
@@ -79,20 +76,18 @@ namespace Dal.Test.Noti
         /// <summary>
         /// Prueba la consulta de una notificación que no existe dado su identificador
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void NotificationReadNotFoundTest()
         {
             Notification notification = new() { Id = 10 };
             notification = _persistent.Read(notification);
 
-            Assert.Null(notification);
+            Assert.Equal(0, notification.Id);
         }
 
         /// <summary>
         /// Prueba la inserción de una notificación
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void NotificationInsertTest()
         {

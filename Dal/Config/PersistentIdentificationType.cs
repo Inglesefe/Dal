@@ -64,7 +64,15 @@ namespace Dal.Config
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<IdentificationType>("SELECT ididentificationtype AS id, name FROM identification_type WHERE ididentificationtype = @Id", entity);
+                IdentificationType result = _connection.QuerySingleOrDefault<IdentificationType>("SELECT ididentificationtype AS id, name FROM identification_type WHERE ididentificationtype = @Id", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {

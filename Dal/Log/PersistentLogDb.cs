@@ -63,7 +63,15 @@ namespace Dal.Log
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<LogDb>("SELECT idlog AS id, date, action, idtable, `table`, `sql`, iduser as user FROM log_db WHERE idlog = @Id", entity);
+                LogDb result = _connection.QuerySingleOrDefault<LogDb>("SELECT idlog AS id, date, action, idtable, `table`, `sql`, iduser as user FROM log_db WHERE idlog = @Id", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {

@@ -64,7 +64,15 @@ namespace Dal.Auth
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<Role>("SELECT idrole AS id, name FROM role WHERE idrole = @Id", entity);
+                Role result = _connection.QuerySingleOrDefault<Role>("SELECT idrole AS id, name FROM role WHERE idrole = @Id", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {
