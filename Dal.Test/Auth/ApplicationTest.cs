@@ -43,7 +43,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de aplicaciones con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationListTest()
         {
@@ -56,7 +55,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de aplicaciones con filtros, ordenamientos y límite y con errores
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationListWithErrorTest()
         {
@@ -66,7 +64,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de una aplicación dada su identificador
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationReadTest()
         {
@@ -79,20 +76,18 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de una aplicación que no existe dado su identificador
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationReadNotFoundTest()
         {
             Application application = new() { Id = 10 };
             application = _persistent.Read(application);
 
-            Assert.Null(application);
+            Assert.Equal(0, application.Id);
         }
 
         /// <summary>
         /// Prueba la inserción de una aplicación
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationInsertTest()
         {
@@ -105,7 +100,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la inserción de una aplicación con nombre duplicado
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationInsertDuplicateTest()
         {
@@ -117,7 +111,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la actualización de una aplicación
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationUpdateTest()
         {
@@ -133,7 +126,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la eliminación de una aplicación
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationDeleteTest()
         {
@@ -143,13 +135,12 @@ namespace Dal.Test.Auth
             Application application2 = new() { Id = 3 };
             application2 = _persistent.Read(application2);
 
-            Assert.Null(application2);
+            Assert.Equal(0, application2.Id);
         }
 
         /// <summary>
         /// Prueba la consulta de un listado de roles de una aplicación con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationListRolesTest()
         {
@@ -162,7 +153,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de roles de una aplicación con filtros, ordenamientos y límite y con errores
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationListRolesWithErrorTest()
         {
@@ -172,7 +162,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de roles no asignados a una aplicación con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationListNotRolesTest()
         {
@@ -185,19 +174,17 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la inserción de un rol de una aplicación
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationInsertRoleTest()
         {
             Role role = _persistent.InsertRole(new() { Id = 4 }, new() { Id = 1 }, new() { Id = 1 });
 
-            Assert.NotNull(role);
+            Assert.NotEqual(0, role.Id);
         }
 
         /// <summary>
         /// Prueba la inserción de un rol de una aplicación duplicado
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationInsertRoleDuplicateTest()
         {
@@ -207,7 +194,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la eliminación de un rol de una aplicación
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void ApplicationDeleteRoleTest()
         {

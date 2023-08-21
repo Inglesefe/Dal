@@ -63,7 +63,15 @@ namespace Dal.Log
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<LogComponent>("SELECT idlog AS id, date, type, component, description, iduser as user FROM log_component WHERE idlog = @Id", entity);
+                LogComponent result = _connection.QuerySingleOrDefault<LogComponent>("SELECT idlog AS id, date, type, component, description, iduser as user FROM log_component WHERE idlog = @Id", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {

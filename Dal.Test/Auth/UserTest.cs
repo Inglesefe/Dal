@@ -43,7 +43,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de usuarios con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserListTest()
         {
@@ -56,7 +55,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de usuarios con filtros, ordenamientos y límite y con errores
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserListWithErrorTest()
         {
@@ -66,7 +64,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un usuario dado su identificador
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserReadTest()
         {
@@ -79,20 +76,18 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un usuario que no existe dado su identificador
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserReadNotFoundTest()
         {
             User user = new() { Id = 10 };
             user = _persistent.Read(user);
 
-            Assert.Null(user);
+            Assert.Equal(0, user.Id);
         }
 
         /// <summary>
         /// Prueba la inserción de un usuario
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserInsertTest()
         {
@@ -105,7 +100,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la inserción de un usuario con login duplicado
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserInsertDuplicateTest()
         {
@@ -117,7 +111,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la actualización de un usuario
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserUpdateTest()
         {
@@ -134,7 +127,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la eliminación de un usuario
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserDeleteTest()
         {
@@ -144,65 +136,72 @@ namespace Dal.Test.Auth
             User user2 = new() { Id = 3 };
             user2 = _persistent.Read(user2);
 
-            Assert.Null(user2);
+            Assert.Equal(0, user2.Id);
         }
 
         /// <summary>
         /// Prueba la consulta de un usuario dado su login y contraseña
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserReadByLoginAndPasswordTest()
         {
             User user = new() { Login = "leandrobaena@gmail.com" };
             user = _persistent.ReadByLoginAndPassword(user, "Prueba123");
 
-            Assert.NotNull(user);
+            Assert.NotEqual(0, user.Id);
         }
 
         /// <summary>
         /// Prueba la consulta de un usuario que no existe dado su login y password
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserReadByLoginAndPasswordWithErrorTest()
         {
             User user = new() { Login = "actualizame@gmail.com" };
             user = _persistent.ReadByLoginAndPassword(user, "Errada");
 
-            Assert.Null(user);
+            Assert.Equal(0, user.Id);
         }
 
         /// <summary>
         /// Prueba la consulta de un usuario dado su login
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserReadByLoginTest()
         {
             User user = new() { Login = "leandrobaena@gmail.com" };
             user = _persistent.ReadByLogin(user);
 
-            Assert.NotNull(user);
+            Assert.NotEqual(0, user.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de un usuario dado su login que no existe
+        /// </summary>
+        [Fact]
+        public void UserReadByLoginNonExistentTest()
+        {
+            User user = new() { Login = "pepitoperez@inglesefe.com.co" };
+            user = _persistent.ReadByLogin(user);
+
+            Assert.Equal(0, user.Id);
         }
 
         /// <summary>
         /// Prueba la consulta de un usuario inactivo dado su login y password
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserReadByLoginAndPasswordInactiveTest()
         {
             User user = new() { Login = "inactivo@gmail.com" };
             user = _persistent.ReadByLoginAndPassword(user, "Prueba123");
 
-            Assert.Null(user);
+            Assert.Equal(0, user.Id);
         }
 
         /// <summary>
         /// Prueba la actualización de la contraseña de un usuario
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserUpdatePasswordTest()
         {
@@ -211,13 +210,12 @@ namespace Dal.Test.Auth
 
             user = _persistent.ReadByLoginAndPassword(user, "Prueba123");
 
-            Assert.NotNull(user);
+            Assert.NotEqual(0, user.Id);
         }
 
         /// <summary>
         /// Prueba la consulta de un listado de roles de un usuario con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserListRolesTest()
         {
@@ -230,7 +228,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de roles de un usuario con filtros, ordenamientos y límite y con errores
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserListRolesWithErrorTest()
         {
@@ -240,7 +237,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de roles no asignados a un usuario con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserListNotRolesTest()
         {
@@ -253,7 +249,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la inserción de un rol de un usuario
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserInsertRoleTest()
         {
@@ -265,7 +260,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la inserción de un rol de un usuario duplicado
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserInsertRoleDuplicateTest()
         {
@@ -275,7 +269,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la eliminación de un rol de un usuario
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void UserDeleteRoleTest()
         {

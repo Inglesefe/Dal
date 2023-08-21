@@ -82,7 +82,7 @@ namespace Dal.Test.Config
             Parameter parameter = new() { Id = 10 };
             parameter = _persistent.Read(parameter);
 
-            Assert.Null(parameter);
+            Assert.Equal(0, parameter.Id);
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Dal.Test.Config
             Parameter parameter2 = new() { Id = 3 };
             parameter2 = _persistent.Read(parameter2);
 
-            Assert.Null(parameter2);
+            Assert.Equal(0, parameter2.Id);
         }
         #endregion
     }

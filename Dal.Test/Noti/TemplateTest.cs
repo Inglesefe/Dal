@@ -43,7 +43,6 @@ namespace Dal.Test.Noti
         /// <summary>
         /// Prueba la consulta de un listado de plantillas con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void TemplateListTest()
         {
@@ -56,7 +55,6 @@ namespace Dal.Test.Noti
         /// <summary>
         /// Prueba la consulta de un listado de plantillas con filtros, ordenamientos y límite y con errores
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void TemplateListWithErrorTest()
         {
@@ -66,7 +64,6 @@ namespace Dal.Test.Noti
         /// <summary>
         /// Prueba la consulta de una plantilla dado su identificador
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void TemplateReadTest()
         {
@@ -79,20 +76,18 @@ namespace Dal.Test.Noti
         /// <summary>
         /// Prueba la consulta de una plantilla que no existe dado su identificador
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void TemplateReadNotFoundTest()
         {
             Template template = new() { Id = 10 };
             template = _persistent.Read(template);
 
-            Assert.Null(template);
+            Assert.Equal(0, template.Id);
         }
 
         /// <summary>
         /// Prueba la inserción de una plantilla
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void TemplateInsertTest()
         {
@@ -105,7 +100,6 @@ namespace Dal.Test.Noti
         /// <summary>
         /// Prueba la actualización de una plantilla
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void TemplateUpdateTest()
         {
@@ -121,7 +115,6 @@ namespace Dal.Test.Noti
         /// <summary>
         /// Prueba la eliminación de una plantilla
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void TemplateDeleteTest()
         {
@@ -131,7 +124,7 @@ namespace Dal.Test.Noti
             Template template2 = new() { Id = 3 };
             template2 = _persistent.Read(template2);
 
-            Assert.Null(template2);
+            Assert.Equal(0, template2.Id);
         }
         #endregion
     }

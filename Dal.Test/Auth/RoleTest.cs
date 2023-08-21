@@ -43,7 +43,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de roles con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleListTest()
         {
@@ -56,7 +55,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de roles con filtros, ordenamientos y límite y con errores
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleListWithErrorTest()
         {
@@ -66,7 +64,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un rol dado su identificador
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleReadTest()
         {
@@ -79,20 +76,18 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un rol que no existe dado su identificador
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleReadNotFoundTest()
         {
             Role role = new() { Id = 10 };
             role = _persistent.Read(role);
 
-            Assert.Null(role);
+            Assert.Equal(0, role.Id);
         }
 
         /// <summary>
         /// Prueba la inserción de un rol
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleInsertTest()
         {
@@ -105,7 +100,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la inserción de un rol con nombre duplicado
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleInsertDuplicateTest()
         {
@@ -117,7 +111,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la actualización de un rol
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleUpdateTest()
         {
@@ -133,7 +126,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la eliminación de un rol
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleDeleteTest()
         {
@@ -143,13 +135,12 @@ namespace Dal.Test.Auth
             Role role2 = new() { Id = 3 };
             role2 = _persistent.Read(role2);
 
-            Assert.Null(role2);
+            Assert.Equal(0, role2.Id);
         }
 
         /// <summary>
         /// Prueba la consulta de un listado de usuarios de un rol con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleListUsersTest()
         {
@@ -162,7 +153,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de usuarios de un rol con filtros, ordenamientos y límite y con errores
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleListUsersWithErrorTest()
         {
@@ -172,7 +162,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de usuarios no asignados a un rol con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleListNotUsersTest()
         {
@@ -185,7 +174,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la inserción de un usuario de un rol
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleInsertUserTest()
         {
@@ -197,7 +185,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la inserción de un usuario de un rol duplicado
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleInsertUserDuplicateTest()
         {
@@ -207,7 +194,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la eliminación de un usuario de un rol
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleDeleteUserTest()
         {
@@ -220,7 +206,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de aplicaciones de un rol con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleListApplicationsTest()
         {
@@ -233,7 +218,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de aplicaciones de un rol con filtros, ordenamientos y límite y con errores
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleListApplicationsWithErrorTest()
         {
@@ -243,7 +227,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la consulta de un listado de aplicaciones no asignadas a un rol con filtros, ordenamientos y límite
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleListNotApplicationsTest()
         {
@@ -256,7 +239,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la inserción de una aplicación de un rol
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleInsertApplicationTest()
         {
@@ -268,7 +250,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la inserción de una aplicación de un rol duplicado
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleInsertApplicationDuplicateTest()
         {
@@ -278,7 +259,6 @@ namespace Dal.Test.Auth
         /// <summary>
         /// Prueba la eliminación de una aplicación de un rol
         /// </summary>
-        /// <returns>N/A</returns>
         [Fact]
         public void RoleDeleteApplicationTest()
         {

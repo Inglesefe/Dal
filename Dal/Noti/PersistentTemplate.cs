@@ -64,7 +64,15 @@ namespace Dal.Noti
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<Template>("SELECT idtemplate AS id, name, content FROM template WHERE idtemplate = @Id", entity);
+                Template result = _connection.QuerySingleOrDefault<Template>("SELECT idtemplate AS id, name, content FROM template WHERE idtemplate = @Id", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {
