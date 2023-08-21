@@ -82,7 +82,7 @@ namespace Dal.Test.Config
             IncomeType incomeType = new() { Id = 10 };
             incomeType = _persistent.Read(incomeType);
 
-            Assert.Null(incomeType);
+            Assert.Equal(0, incomeType.Id);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Dal.Test.Config
             IncomeType incomeType2 = new() { Id = 3 };
             incomeType2 = _persistent.Read(incomeType2);
 
-            Assert.Null(incomeType2);
+            Assert.Equal(0, incomeType2.Id);
         }
         #endregion
     }

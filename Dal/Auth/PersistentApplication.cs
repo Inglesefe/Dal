@@ -64,7 +64,15 @@ namespace Dal.Auth
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<Application>("SELECT idapplication AS id, name FROM application WHERE idapplication = @Id", entity);
+                Application result = _connection.QuerySingleOrDefault<Application>("SELECT idapplication AS id, name FROM application WHERE idapplication = @Id", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {

@@ -82,7 +82,7 @@ namespace Dal.Test.Config
             Country country = new() { Id = 10 };
             country = _persistent.Read(country);
 
-            Assert.Null(country);
+            Assert.Equal(0, country.Id);
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Dal.Test.Config
             Country country2 = new() { Id = 3 };
             country2 = _persistent.Read(country2);
 
-            Assert.Null(country2);
+            Assert.Equal(0, country2.Id);
         }
         #endregion
     }

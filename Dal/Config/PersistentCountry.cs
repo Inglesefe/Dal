@@ -64,7 +64,15 @@ namespace Dal.Config
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<Country>("SELECT idcountry AS id, code, name FROM country WHERE idcountry = @Id", entity);
+                Country result = _connection.QuerySingleOrDefault<Country>("SELECT idcountry AS id, code, name FROM country WHERE idcountry = @Id", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {

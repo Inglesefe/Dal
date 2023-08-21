@@ -64,7 +64,15 @@ namespace Dal.Config
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<IncomeType>("SELECT idincometype AS id, code, name FROM income_type WHERE idincometype = @Id", entity);
+                IncomeType result = _connection.QuerySingleOrDefault<IncomeType>("SELECT idincometype AS id, code, name FROM income_type WHERE idincometype = @Id", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {

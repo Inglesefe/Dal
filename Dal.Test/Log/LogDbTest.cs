@@ -82,7 +82,7 @@ namespace Dal.Test.Log
             LogDb log = new() { Id = 1000 };
             log = _persistent.Read(log);
 
-            Assert.Null(log);
+            Assert.Equal(0, log.Id);
         }
 
         /// <summary>

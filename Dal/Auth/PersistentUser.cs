@@ -64,7 +64,15 @@ namespace Dal.Auth
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<User>("SELECT iduser AS id, login, name, active FROM user WHERE iduser = @Id", entity);
+                User result = _connection.QuerySingleOrDefault<User>("SELECT iduser AS id, login, name, active FROM user WHERE iduser = @Id", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {
@@ -167,7 +175,15 @@ namespace Dal.Auth
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<User>("SELECT iduser AS id, login, name, active FROM user WHERE login = @Login AND password = SHA2(@Pass, 512) AND active = 1", new { entity.Login, Pass = password });
+                User result = _connection.QuerySingleOrDefault<User>("SELECT iduser AS id, login, name, active FROM user WHERE login = @Login AND password = SHA2(@Pass, 512) AND active = 1", new { entity.Login, Pass = password });
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {
@@ -191,7 +207,15 @@ namespace Dal.Auth
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<User>("SELECT iduser AS id, login, name, active FROM user WHERE login = @Login AND active = 1", entity);
+                User result = _connection.QuerySingleOrDefault<User>("SELECT iduser AS id, login, name, active FROM user WHERE login = @Login AND active = 1", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {

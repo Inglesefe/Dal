@@ -64,7 +64,15 @@ namespace Dal.Config
             try
             {
                 OpenConnection();
-                entity = _connection.QuerySingleOrDefault<Parameter>("SELECT idparameter AS id, name, value FROM parameter WHERE idparameter = @Id", entity);
+                Parameter result = _connection.QuerySingleOrDefault<Parameter>("SELECT idparameter AS id, name, value FROM parameter WHERE idparameter = @Id", entity);
+                if (result == null)
+                {
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
+                }
             }
             catch (Exception ex)
             {
