@@ -96,6 +96,30 @@ namespace Dal.Test.Log
 
             Assert.NotEqual(0, log.Id);
         }
+
+        /// <summary>
+        /// Prueba la actualización de un registro
+        /// </summary>
+        [Fact]
+        public void LogDbUpdateTest()
+        {
+            LogDb log = new() { Id = 1 };
+            log = _persistent.Update(log);
+
+            Assert.Equal(1, log.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de un registro
+        /// </summary>
+        [Fact]
+        public void LogDbDeleteTest()
+        {
+            LogDb log = new() { Id = 1 };
+            log = _persistent.Delete(log);
+
+            Assert.Equal(1, log.Id);
+        }
         #endregion
     }
 }

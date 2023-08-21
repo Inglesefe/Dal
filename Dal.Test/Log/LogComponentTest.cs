@@ -89,12 +89,36 @@ namespace Dal.Test.Log
         /// Prueba la inserción de un registro
         /// </summary>
         [Fact]
-        public void LogDbInsertTest()
+        public void LogComponentInsertTest()
         {
             LogComponent log = new() { Type = "I", Component = "Log.Test", Description = "Prueba de insercion de log con usuario", User = 1 };
             log = _persistent.Insert(log);
 
             Assert.NotEqual(0, log.Id);
+        }
+
+        /// <summary>
+        /// Prueba la actualización de un registro
+        /// </summary>
+        [Fact]
+        public void LogComponentUpdateTest()
+        {
+            LogComponent log = new() { Id = 1 };
+            log = _persistent.Update(log);
+
+            Assert.Equal(1, log.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de un registro
+        /// </summary>
+        [Fact]
+        public void LogComponentDeleteTest()
+        {
+            LogComponent log = new() { Id = 1 };
+            log = _persistent.Delete(log);
+
+            Assert.Equal(1, log.Id);
         }
         #endregion
     }
