@@ -11,7 +11,7 @@ namespace Dal.Config
     /// <summary>
     /// Realiza la persistencia de las oficinas en la base de datos
     /// </summary>
-    public class PersistentOffice : PersistentBaseWithLog<Office>
+    public class PersistentOffice : PersistentBaseWithLog, IPersistentWithLog<Office>
     {
         #region Constructors
         /// <summary>
@@ -31,7 +31,7 @@ namespace Dal.Config
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de oficinas</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar las oficinas</exception>
-        public override ListResult<Office> List(string filters, string orders, int limit, int offset)
+        public ListResult<Office> List(string filters, string orders, int limit, int offset)
         {
             ListResult<Office> result;
             try
@@ -79,7 +79,7 @@ namespace Dal.Config
         /// <param name="entity">Oficina a consultar</param>
         /// <returns>Oficina con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar la oficina</exception>
-        public override Office Read(Office entity)
+        public Office Read(Office entity)
         {
             try
             {
@@ -130,7 +130,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Oficina insertada con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar la oficina</exception>
-        public override Office Insert(Office entity, User user)
+        public Office Insert(Office entity, User user)
         {
             try
             {
@@ -157,7 +157,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Oficina actualizada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar la oficina</exception>
-        public override Office Update(Office entity, User user)
+        public Office Update(Office entity, User user)
         {
             try
             {
@@ -183,7 +183,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Oficina eliminada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar la oficina</exception>
-        public override Office Delete(Office entity, User user)
+        public Office Delete(Office entity, User user)
         {
             try
             {

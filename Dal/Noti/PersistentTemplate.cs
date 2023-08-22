@@ -11,7 +11,7 @@ namespace Dal.Noti
     /// <summary>
     /// Realiza la persistencia de las plantillas en la base de datos
     /// </summary>
-    public class PersistentTemplate : PersistentBaseWithLog<Template>
+    public class PersistentTemplate : PersistentBaseWithLog, IPersistentWithLog<Template>
     {
         #region Constructors
         /// <summary>
@@ -31,7 +31,7 @@ namespace Dal.Noti
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de plantillas</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar las plantillas</exception>
-        public override ListResult<Template> List(string filters, string orders, int limit, int offset)
+        public ListResult<Template> List(string filters, string orders, int limit, int offset)
         {
             ListResult<Template> result;
             try
@@ -59,7 +59,7 @@ namespace Dal.Noti
         /// <param name="entity">Plantilla a consultar</param>
         /// <returns>Plnatilla con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar la plantilla</exception>
-        public override Template Read(Template entity)
+        public Template Read(Template entity)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace Dal.Noti
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Plantilla insertada con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar la plantilla</exception>
-        public override Template Insert(Template entity, User user)
+        public Template Insert(Template entity, User user)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace Dal.Noti
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Plantilla actualizada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar la plantilla</exception>
-        public override Template Update(Template entity, User user)
+        public Template Update(Template entity, User user)
         {
             try
             {
@@ -144,7 +144,7 @@ namespace Dal.Noti
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Plantilla eliminada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar la plantilla</exception>
-        public override Template Delete(Template entity, User user)
+        public Template Delete(Template entity, User user)
         {
             try
             {

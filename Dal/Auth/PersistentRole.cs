@@ -10,7 +10,7 @@ namespace Dal.Auth
     /// <summary>
     /// Realiza la persistencia de los roles en la base de datos
     /// </summary>
-    public class PersistentRole : PersistentBaseWithLog<Role>, IPersistentRole
+    public class PersistentRole : PersistentBaseWithLog, IPersistentRole
     {
         #region Constructors
         /// <summary>
@@ -30,7 +30,7 @@ namespace Dal.Auth
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de roles</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar los roles</exception>
-        public override ListResult<Role> List(string filters, string orders, int limit, int offset)
+        public ListResult<Role> List(string filters, string orders, int limit, int offset)
         {
             ListResult<Role> result;
             try
@@ -58,7 +58,7 @@ namespace Dal.Auth
         /// <param name="entity">Rol a consultar</param>
         /// <returns>Rol con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar el rol</exception>
-        public override Role Read(Role entity)
+        public Role Read(Role entity)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace Dal.Auth
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Rol insertado con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar el rol</exception>
-        public override Role Insert(Role entity, User user)
+        public Role Insert(Role entity, User user)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace Dal.Auth
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Rol actualizado</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar el rol</exception>
-        public override Role Update(Role entity, User user)
+        public Role Update(Role entity, User user)
         {
             try
             {
@@ -143,7 +143,7 @@ namespace Dal.Auth
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Rol eliminado</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar el rol</exception>
-        public override Role Delete(Role entity, User user)
+        public Role Delete(Role entity, User user)
         {
             try
             {

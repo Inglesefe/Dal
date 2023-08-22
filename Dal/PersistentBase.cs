@@ -1,6 +1,4 @@
-﻿using Dal.Dto;
-using Entities;
-using System.Data;
+﻿using System.Data;
 
 namespace Dal
 {
@@ -8,7 +6,7 @@ namespace Dal
     /// Clase base de la jerarquía de persistencias de entidades
     /// </summary>
     /// <typeparam name="T">Tipo de la entidad a persistir</typeparam>
-    public abstract class PersistentBase<T> : IPersistence<T> where T : EntityBase
+    public abstract class PersistentBase
     {
         #region Attributes
         /// <summary>
@@ -29,47 +27,6 @@ namespace Dal
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Trae un listado de registros aplicando filtros, ordenamientos y límites de registros a traer
-        /// </summary>
-        /// <param name="filters">Filtros a aplicar en la consulta</param>
-        /// <param name="orders">Ordenamientos a aplicar en la consulta</param>
-        /// <param name="limit">Límite de registros a traer</param>
-        /// <param name="offset">Registro inicial desde el que se cuenta el límite de registros</param>
-        /// <returns>Listado de registros y el total que traería sin aplicar límites</returns>
-        public abstract ListResult<T> List(string filters, string orders, int limit, int offset);
-
-        /// <summary>
-        /// Trae una entidad con los datos cargados desde la base de datos
-        /// </summary>
-        /// <param name="entity">Entidad a cargar dado su identificador en la base de datos</param>
-        /// <returns>Entidad con los datos cargados desde la base de datos</returns>
-        public abstract T Read(T entity);
-
-        /// <summary>
-        /// Inserta una entidad en la base de datos
-        /// </summary>
-        /// <param name="entity">Entidad a insertar en la base de datos</param>
-        /// <param name="user">Usuario que realiza la inserción</param>
-        /// <returns>Entidad insertada en la base de datos, con el id generado en ella si aplica</returns>
-        public abstract T Insert(T entity);
-
-        /// <summary>
-        /// Actualiza una entidad en la base de datos
-        /// </summary>
-        /// <param name="entity">Entidad a actualizar en la base de datos</param>
-        /// <param name="user">Usuario que realiza la actualización</param>
-        /// <returns>Entidad actualizada en la base de datos</returns>
-        public abstract T Update(T entity);
-
-        /// <summary>
-        /// Elimina una entidad en la base de datos
-        /// </summary>
-        /// <param name="entity">Entidad a eliminar en la base de datos</param>
-        /// <param name="user">Usuario que realiza la eliminación</param>
-        /// <returns>Entidad eliminada en la base de datos</returns>
-        public abstract T Delete(T entity);
-
         /// <summary>
         /// Verifica que si la conexión a la base de datos no está abierta se abra
         /// </summary>

@@ -10,7 +10,7 @@ namespace Dal.Log
     /// <summary>
     /// Realiza la persistencia de los registros de base de datos en la base de datos
     /// </summary>
-    public class PersistentLogDb : PersistentBase<LogDb>
+    public class PersistentLogDb : PersistentBase, IPersistentBase<LogDb>
     {
         #region Constructors
         /// <summary>
@@ -30,7 +30,7 @@ namespace Dal.Log
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de registros</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar los registros</exception>
-        public override ListResult<LogDb> List(string filters, string orders, int limit, int offset)
+        public ListResult<LogDb> List(string filters, string orders, int limit, int offset)
         {
             ListResult<LogDb> result;
             try
@@ -58,7 +58,7 @@ namespace Dal.Log
         /// <param name="entity">Registro a consultar</param>
         /// <returns>Registro con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar el registro</exception>
-        public override LogDb Read(LogDb entity)
+        public LogDb Read(LogDb entity)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace Dal.Log
         /// <param name="entity">Registro a insertar</param>
         /// <returns>Registro insertado con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar el registro</exception>
-        public override LogDb Insert(LogDb entity)
+        public LogDb Insert(LogDb entity)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace Dal.Log
         /// <param name="entity">Log a actualizar</param>
         /// <returns>Log actualizado</returns>
         /// <exception cref="NotImplementedException">Si hubo un error al actualizar el log</exception>
-        public override LogDb Update(LogDb entity)
+        public LogDb Update(LogDb entity)
         {
             return entity;
         }
@@ -125,7 +125,7 @@ namespace Dal.Log
         /// <param name="entity">Log a eliminar</param>
         /// <returns>Log eliminado</returns>
         /// <exception cref="NotImplementedException">Si hubo un error al eliminar el log</exception>
-        public override LogDb Delete(LogDb entity)
+        public LogDb Delete(LogDb entity)
         {
             return entity;
         }

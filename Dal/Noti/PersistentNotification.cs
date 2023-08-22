@@ -11,7 +11,7 @@ namespace Dal.Noti
     /// <summary>
     /// Realiza la persistencia de las notificaciones en la base de datos
     /// </summary>
-    public class PersistentNotification : PersistentBaseWithLog<Notification>
+    public class PersistentNotification : PersistentBaseWithLog, IPersistentWithLog<Notification>
     {
         #region Constructors
         /// <summary>
@@ -31,7 +31,7 @@ namespace Dal.Noti
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de notificaciones</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar las notificaciones</exception>
-        public override ListResult<Notification> List(string filters, string orders, int limit, int offset)
+        public ListResult<Notification> List(string filters, string orders, int limit, int offset)
         {
             ListResult<Notification> result;
             try
@@ -59,7 +59,7 @@ namespace Dal.Noti
         /// <param name="entity">Notificación a consultar</param>
         /// <returns>Notificación con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar la notificación</exception>
-        public override Notification Read(Notification entity)
+        public Notification Read(Notification entity)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace Dal.Noti
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Notificación insertada con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar la notificación</exception>
-        public override Notification Insert(Notification entity, User user)
+        public Notification Insert(Notification entity, User user)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace Dal.Noti
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Notificación actualizada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar la notificación</exception>
-        public override Notification Update(Notification entity, User user)
+        public Notification Update(Notification entity, User user)
         {
             //Una notificación no se modifica una vez enviada
             return entity;
@@ -131,7 +131,7 @@ namespace Dal.Noti
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Notificación eliminada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar la plantilla</exception>
-        public override Notification Delete(Notification entity, User user)
+        public Notification Delete(Notification entity, User user)
         {
             //Una notificación no se elimina una vez enviada
             return entity;

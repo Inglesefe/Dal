@@ -10,7 +10,7 @@ namespace Dal.Auth
     /// <summary>
     /// Realiza la persistencia de los usuarios en la base de datos
     /// </summary>
-    public class PersistentUser : PersistentBaseWithLog<User>, IPersistentUser
+    public class PersistentUser : PersistentBaseWithLog, IPersistentUser
     {
         #region Constructors
         /// <summary>
@@ -30,7 +30,7 @@ namespace Dal.Auth
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de usuarios</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar los usuarios</exception>
-        public override ListResult<User> List(string filters, string orders, int limit, int offset)
+        public ListResult<User> List(string filters, string orders, int limit, int offset)
         {
             ListResult<User> result;
             try
@@ -58,7 +58,7 @@ namespace Dal.Auth
         /// <param name="entity">Usuario a consultar</param>
         /// <returns>Usuario con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar el usuario</exception>
-        public override User Read(User entity)
+        public User Read(User entity)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace Dal.Auth
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Usuario insertado con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar el usuario</exception>
-        public override User Insert(User entity, User user)
+        public User Insert(User entity, User user)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace Dal.Auth
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Usuario actualizado</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar el usuario</exception>
-        public override User Update(User entity, User user)
+        public User Update(User entity, User user)
         {
             try
             {
@@ -143,7 +143,7 @@ namespace Dal.Auth
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Usuario eliminado</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar el usuario</exception>
-        public override User Delete(User entity, User user)
+        public User Delete(User entity, User user)
         {
             try
             {

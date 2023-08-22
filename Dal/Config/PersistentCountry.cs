@@ -11,7 +11,7 @@ namespace Dal.Config
     /// <summary>
     /// Realiza la persistencia de los paises en la base de datos
     /// </summary>
-    public class PersistentCountry : PersistentBaseWithLog<Country>
+    public class PersistentCountry : PersistentBaseWithLog, IPersistentWithLog<Country>
     {
         #region Constructors
         /// <summary>
@@ -31,7 +31,7 @@ namespace Dal.Config
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de paises</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar los paises</exception>
-        public override ListResult<Country> List(string filters, string orders, int limit, int offset)
+        public ListResult<Country> List(string filters, string orders, int limit, int offset)
         {
             ListResult<Country> result;
             try
@@ -59,7 +59,7 @@ namespace Dal.Config
         /// <param name="entity">País a consultar</param>
         /// <returns>País con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar el país</exception>
-        public override Country Read(Country entity)
+        public Country Read(Country entity)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>País insertado con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar el país</exception>
-        public override Country Insert(Country entity, User user)
+        public Country Insert(Country entity, User user)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>País actualizada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar el país</exception>
-        public override Country Update(Country entity, User user)
+        public Country Update(Country entity, User user)
         {
             try
             {
@@ -144,7 +144,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>País eliminado</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar el país</exception>
-        public override Country Delete(Country entity, User user)
+        public Country Delete(Country entity, User user)
         {
             try
             {
