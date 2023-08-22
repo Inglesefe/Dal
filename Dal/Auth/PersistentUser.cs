@@ -4,14 +4,13 @@ using Dal.Utils;
 using Dapper;
 using Entities.Auth;
 using System.Data;
-using static Dapper.SqlMapper;
 
 namespace Dal.Auth
 {
     /// <summary>
     /// Realiza la persistencia de los usuarios en la base de datos
     /// </summary>
-    public class PersistentUser : PersistentBaseWithLog<User>
+    public class PersistentUser : PersistentBaseWithLog<User>, IPersistentUser
     {
         #region Constructors
         /// <summary>
