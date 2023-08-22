@@ -7,7 +7,7 @@ namespace Dal.Auth
     /// <summary>
     /// Métodos propios de la persistencia de usuarios
     /// </summary>
-    public interface IPersistentUser
+    public interface IPersistentUser : IPersistentWithLog<User>
     {
         /// <summary>
         /// Consulta un usuario dado su login y contraseña

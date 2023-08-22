@@ -7,7 +7,7 @@ namespace Dal.Auth
     /// <summary>
     /// Métodos propios de la persistencia de roles
     /// </summary>
-    public interface IPersistentRole
+    public interface IPersistentRole : IPersistentWithLog<Role>
     {
         /// <summary>
         /// Trae un listado de usuarios asignados a un rol desde la base de datos

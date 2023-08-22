@@ -10,7 +10,7 @@ namespace Dal.Auth
     /// <summary>
     /// Realiza la persistencia de las aplicaciones en la base de datos
     /// </summary>
-    public class PersistentApplication : PersistentBaseWithLog<Application>, IPersistentApplication
+    public class PersistentApplication : PersistentBaseWithLog, IPersistentApplication
     {
         #region Constructors
         /// <summary>
@@ -30,7 +30,7 @@ namespace Dal.Auth
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de aplicaciones</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar las aplicaciones</exception>
-        public override ListResult<Application> List(string filters, string orders, int limit, int offset)
+        public ListResult<Application> List(string filters, string orders, int limit, int offset)
         {
             ListResult<Application> result;
             try
@@ -58,7 +58,7 @@ namespace Dal.Auth
         /// <param name="entity">Aplicación a consultar</param>
         /// <returns>Aplicación con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar la aplicación</exception>
-        public override Application Read(Application entity)
+        public Application Read(Application entity)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace Dal.Auth
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Aplicación insertada con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar la aplicación</exception>
-        public override Application Insert(Application entity, User user)
+        public Application Insert(Application entity, User user)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace Dal.Auth
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Aplicación actualizada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar la aplicación</exception>
-        public override Application Update(Application entity, User user)
+        public Application Update(Application entity, User user)
         {
             try
             {
@@ -143,7 +143,7 @@ namespace Dal.Auth
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Aplicación eliminada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar la aplicación</exception>
-        public override Application Delete(Application entity, User user)
+        public Application Delete(Application entity, User user)
         {
             try
             {
