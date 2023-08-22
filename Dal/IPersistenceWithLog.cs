@@ -24,7 +24,7 @@ namespace Dal
         /// </summary>
         /// <param name="entity">Entidad a cargar dado su identificador en la base de datos</param>
         /// <returns>Entidad con los datos cargados desde la base de datos</returns>
-        public abstract T Read(T entity);
+        T Read(T entity);
 
         /// <summary>
         /// Inserta una entidad en la base de datos
@@ -32,7 +32,7 @@ namespace Dal
         /// <param name="entity">Entidad a insertar en la base de datos</param>
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Entidad insertada en la base de datos, con el id generado en ella si aplica</returns>
-        public abstract T Insert(T entity, User user);
+        T Insert(T entity, User user);
 
         /// <summary>
         /// Actualiza una entidad en la base de datos
@@ -40,7 +40,7 @@ namespace Dal
         /// <param name="entity">Entidad a actualizar en la base de datos</param>
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Entidad actualizada en la base de datos</returns>
-        public abstract T Update(T entity, User user);
+        T Update(T entity, User user);
 
         /// <summary>
         /// Elimina una entidad en la base de datos
@@ -48,6 +48,6 @@ namespace Dal
         /// <param name="entity">Entidad a eliminar en la base de datos</param>
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Entidad eliminada en la base de datos</returns>
-        public abstract T Delete(T entity, User user);
+        T Delete(T entity, User user);
     }
 }
