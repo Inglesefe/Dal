@@ -7,7 +7,7 @@ namespace Dal.Auth
     /// <summary>
     /// Métodos propios de la persistencia de aplicaciones
     /// </summary>
-    public interface IPersistentApplication
+    public interface IPersistentApplication : IPersistentWithLog<Application>
     {
         /// <summary>
         /// Trae un listado de roles asignados a una aplicación desde la base de datos

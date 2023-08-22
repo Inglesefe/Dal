@@ -11,7 +11,7 @@ namespace Dal.Config
     /// <summary>
     /// Realiza la persistencia de los tipos de identificación en la base de datos
     /// </summary>
-    public class PersistentIdentificationType : PersistentBaseWithLog<IdentificationType>
+    public class PersistentIdentificationType : PersistentBaseWithLog, IPersistentWithLog<IdentificationType>
     {
         #region Constructors
         /// <summary>
@@ -31,7 +31,7 @@ namespace Dal.Config
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de tipos de identificación</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar los tipos de identificación</exception>
-        public override ListResult<IdentificationType> List(string filters, string orders, int limit, int offset)
+        public ListResult<IdentificationType> List(string filters, string orders, int limit, int offset)
         {
             ListResult<IdentificationType> result;
             try
@@ -59,7 +59,7 @@ namespace Dal.Config
         /// <param name="entity">Tipo de identificación a consultar</param>
         /// <returns>Tipo de identificación con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar el tipo de identificación</exception>
-        public override IdentificationType Read(IdentificationType entity)
+        public IdentificationType Read(IdentificationType entity)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Tipo de identificación insertado con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar el tipo de identificación</exception>
-        public override IdentificationType Insert(IdentificationType entity, User user)
+        public IdentificationType Insert(IdentificationType entity, User user)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Tipo de identificación actualizada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar el tipo de identificación</exception>
-        public override IdentificationType Update(IdentificationType entity, User user)
+        public IdentificationType Update(IdentificationType entity, User user)
         {
             try
             {
@@ -144,7 +144,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Tipo de identificación eliminado</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar el tipo de identificación</exception>
-        public override IdentificationType Delete(IdentificationType entity, User user)
+        public IdentificationType Delete(IdentificationType entity, User user)
         {
             try
             {

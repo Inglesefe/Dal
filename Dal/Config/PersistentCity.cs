@@ -11,7 +11,7 @@ namespace Dal.Config
     /// <summary>
     /// Realiza la persistencia de las ciudades en la base de datos
     /// </summary>
-    public class PersistentCity : PersistentBaseWithLog<City>
+    public class PersistentCity : PersistentBaseWithLog, IPersistentWithLog<City>
     {
         #region Constructors
         /// <summary>
@@ -31,7 +31,7 @@ namespace Dal.Config
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de ciudades</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar las ciudades</exception>
-        public override ListResult<City> List(string filters, string orders, int limit, int offset)
+        public ListResult<City> List(string filters, string orders, int limit, int offset)
         {
             ListResult<City> result;
             try
@@ -67,7 +67,7 @@ namespace Dal.Config
         /// <param name="entity">Ciudad a consultar</param>
         /// <returns>Ciudad con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar la ciudad</exception>
-        public override City Read(City entity)
+        public City Read(City entity)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Ciudad insertada con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar la ciudad</exception>
-        public override City Insert(City entity, User user)
+        public City Insert(City entity, User user)
         {
             try
             {
@@ -134,7 +134,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Ciudad actualizada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar la ciudad</exception>
-        public override City Update(City entity, User user)
+        public City Update(City entity, User user)
         {
             try
             {
@@ -160,7 +160,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Ciudad eliminada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar la ciudad</exception>
-        public override City Delete(City entity, User user)
+        public City Delete(City entity, User user)
         {
             try
             {

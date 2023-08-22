@@ -11,7 +11,7 @@ namespace Dal.Config
     /// <summary>
     /// Realiza la persistencia de los parámetros en la base de datos
     /// </summary>
-    public class PersistentParameter : PersistentBaseWithLog<Parameter>
+    public class PersistentParameter : PersistentBaseWithLog, IPersistentWithLog<Parameter>
     {
         #region Constructors
         /// <summary>
@@ -31,7 +31,7 @@ namespace Dal.Config
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de parámetros</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar los parámetros</exception>
-        public override ListResult<Parameter> List(string filters, string orders, int limit, int offset)
+        public ListResult<Parameter> List(string filters, string orders, int limit, int offset)
         {
             ListResult<Parameter> result;
             try
@@ -59,7 +59,7 @@ namespace Dal.Config
         /// <param name="entity">Parámetro a consultar</param>
         /// <returns>Parámetro con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar el parámetro</exception>
-        public override Parameter Read(Parameter entity)
+        public Parameter Read(Parameter entity)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Parámetro insertado con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar el parámetro</exception>
-        public override Parameter Insert(Parameter entity, User user)
+        public Parameter Insert(Parameter entity, User user)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Parámetro actualizada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar el parámetro</exception>
-        public override Parameter Update(Parameter entity, User user)
+        public Parameter Update(Parameter entity, User user)
         {
             try
             {
@@ -144,7 +144,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Parámetro eliminado</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar el parámetro</exception>
-        public override Parameter Delete(Parameter entity, User user)
+        public Parameter Delete(Parameter entity, User user)
         {
             try
             {

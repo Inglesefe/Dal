@@ -11,7 +11,7 @@ namespace Dal.Config
     /// <summary>
     /// Realiza la persistencia de los tipos de ingresos en la base de datos
     /// </summary>
-    public class PersistentIncomeType : PersistentBaseWithLog<IncomeType>
+    public class PersistentIncomeType : PersistentBaseWithLog, IPersistentWithLog<IncomeType>
     {
         #region Constructors
         /// <summary>
@@ -31,7 +31,7 @@ namespace Dal.Config
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de tipos de ingresos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar los tipos de ingresos</exception>
-        public override ListResult<IncomeType> List(string filters, string orders, int limit, int offset)
+        public ListResult<IncomeType> List(string filters, string orders, int limit, int offset)
         {
             ListResult<IncomeType> result;
             try
@@ -59,7 +59,7 @@ namespace Dal.Config
         /// <param name="entity">Tipo de ingresos a consultar</param>
         /// <returns>Tipo de ingresos con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar el tipo de ingresos</exception>
-        public override IncomeType Read(IncomeType entity)
+        public IncomeType Read(IncomeType entity)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Tipo de ingresos insertado con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar el tipo de ingresos</exception>
-        public override IncomeType Insert(IncomeType entity, User user)
+        public IncomeType Insert(IncomeType entity, User user)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Tipo de ingresos actualizada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar el tipo de ingresos</exception>
-        public override IncomeType Update(IncomeType entity, User user)
+        public IncomeType Update(IncomeType entity, User user)
         {
             try
             {
@@ -144,7 +144,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Tipo de ingresos eliminado</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar el tipo de ingresos</exception>
-        public override IncomeType Delete(IncomeType entity, User user)
+        public IncomeType Delete(IncomeType entity, User user)
         {
             try
             {

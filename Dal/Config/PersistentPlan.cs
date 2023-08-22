@@ -11,7 +11,7 @@ namespace Dal.Config
     /// <summary>
     /// Realiza la persistencia de los planes en la base de datos
     /// </summary>
-    public class PersistentPlan : PersistentBaseWithLog<Plan>
+    public class PersistentPlan : PersistentBaseWithLog, IPersistentWithLog<Plan>
     {
         #region Constructors
         /// <summary>
@@ -31,7 +31,7 @@ namespace Dal.Config
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
         /// <returns>Listado de planes</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar los planes</exception>
-        public override ListResult<Plan> List(string filters, string orders, int limit, int offset)
+        public ListResult<Plan> List(string filters, string orders, int limit, int offset)
         {
             ListResult<Plan> result;
             try
@@ -59,7 +59,7 @@ namespace Dal.Config
         /// <param name="entity">Plan a consultar</param>
         /// <returns>Plan con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar el plan</exception>
-        public override Plan Read(Plan entity)
+        public Plan Read(Plan entity)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la inserción</param>
         /// <returns>Plan insertado con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar el plan</exception>
-        public override Plan Insert(Plan entity, User user)
+        public Plan Insert(Plan entity, User user)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la actualización</param>
         /// <returns>Plan actualizada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar el plan</exception>
-        public override Plan Update(Plan entity, User user)
+        public Plan Update(Plan entity, User user)
         {
             try
             {
@@ -149,7 +149,7 @@ namespace Dal.Config
         /// <param name="user">Usuario que realiza la eliminación</param>
         /// <returns>Plan eliminado</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar el plan</exception>
-        public override Plan Delete(Plan entity, User user)
+        public Plan Delete(Plan entity, User user)
         {
             try
             {
