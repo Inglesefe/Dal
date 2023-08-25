@@ -35,7 +35,7 @@ namespace Dal.Test.Config
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new(new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _persistent = new();
         }
         #endregion
 
@@ -46,7 +46,7 @@ namespace Dal.Test.Config
         [Fact]
         public void OfficeListTest()
         {
-            ListResult<Office> list = _persistent.List("o.idoffice = 1", "o.name", 1, 0);
+            ListResult<Office> list = _persistent.List("o.idoffice = 1", "o.name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -58,7 +58,7 @@ namespace Dal.Test.Config
         [Fact]
         public void OfficeListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idoficina = 1", "name", 1, 0));
+            Assert.Throws<PersistentException>(() => _persistent.List("idoficina = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Dal.Test.Config
         public void OfficeReadTest()
         {
             Office office = new() { Id = 1 };
-            office = _persistent.Read(office);
+            office = _persistent.Read(office, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal("Castellana", office.Name);
         }
@@ -80,7 +80,7 @@ namespace Dal.Test.Config
         public void OfficeReadNotFoundTest()
         {
             Office office = new() { Id = 10 };
-            office = _persistent.Read(office);
+            office = _persistent.Read(office, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, office.Id);
         }
@@ -92,7 +92,7 @@ namespace Dal.Test.Config
         public void OfficeInsertTest()
         {
             Office office = new() { City = new() { Id = 1 }, Name = "Madelena", Address = "Calle 59 sur" };
-            office = _persistent.Insert(office, new() { Id = 1 });
+            office = _persistent.Insert(office, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual(0, office.Id);
         }
@@ -104,10 +104,10 @@ namespace Dal.Test.Config
         public void OfficeUpdateTest()
         {
             Office city = new() { Id = 2, City = new() { Id = 1 }, Name = "Santa Librada", Address = "Calle 78 sur" };
-            _ = _persistent.Update(city, new() { Id = 1 });
+            _ = _persistent.Update(city, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Office city2 = new() { Id = 2 };
-            city2 = _persistent.Read(city2);
+            city2 = _persistent.Read(city2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual("Kennedy", city2.Name);
         }
@@ -119,10 +119,10 @@ namespace Dal.Test.Config
         public void OfficeDeleteTest()
         {
             Office office = new() { Id = 3 };
-            _ = _persistent.Delete(office, new() { Id = 1 });
+            _ = _persistent.Delete(office, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Office office2 = new() { Id = 3 };
-            office2 = _persistent.Read(office2);
+            office2 = _persistent.Read(office2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, office2.Id);
         }

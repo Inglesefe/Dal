@@ -35,7 +35,7 @@ namespace Dal.Test.Config
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new(new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _persistent = new();
         }
         #endregion
 
@@ -46,7 +46,7 @@ namespace Dal.Test.Config
         [Fact]
         public void IdentificationTypeListTest()
         {
-            ListResult<IdentificationType> list = _persistent.List("ididentificationtype = 1", "name", 1, 0);
+            ListResult<IdentificationType> list = _persistent.List("ididentificationtype = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -58,7 +58,7 @@ namespace Dal.Test.Config
         [Fact]
         public void IdentificationTypeListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idtipoidentificacion = 1", "name", 1, 0));
+            Assert.Throws<PersistentException>(() => _persistent.List("idtipoidentificacion = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Dal.Test.Config
         public void IdentificationTypeReadTest()
         {
             IdentificationType identificationType = new() { Id = 1 };
-            identificationType = _persistent.Read(identificationType);
+            identificationType = _persistent.Read(identificationType, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal("Cedula ciudadania", identificationType.Name);
         }
@@ -80,7 +80,7 @@ namespace Dal.Test.Config
         public void IdentificationTypeReadNotFoundTest()
         {
             IdentificationType identificationType = new() { Id = 10 };
-            identificationType = _persistent.Read(identificationType);
+            identificationType = _persistent.Read(identificationType, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, identificationType.Id);
         }
@@ -92,7 +92,7 @@ namespace Dal.Test.Config
         public void IdentificationTypeInsertTest()
         {
             IdentificationType identificationType = new() { Name = "Prueba 1" };
-            identificationType = _persistent.Insert(identificationType, new() { Id = 1 });
+            identificationType = _persistent.Insert(identificationType, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual(0, identificationType.Id);
         }
@@ -104,10 +104,10 @@ namespace Dal.Test.Config
         public void IdentificationTypeUpdateTest()
         {
             IdentificationType identificationType = new() { Id = 2, Name = "Tarjeta de identidad" };
-            _ = _persistent.Update(identificationType, new() { Id = 1 });
+            _ = _persistent.Update(identificationType, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             IdentificationType identificationType2 = new() { Id = 2 };
-            identificationType2 = _persistent.Read(identificationType2);
+            identificationType2 = _persistent.Read(identificationType2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual("Cedula extranjeria", identificationType2.Name);
         }
@@ -119,10 +119,10 @@ namespace Dal.Test.Config
         public void IdentificationTypeDeleteTest()
         {
             IdentificationType identificationType = new() { Id = 3 };
-            _ = _persistent.Delete(identificationType, new() { Id = 1 });
+            _ = _persistent.Delete(identificationType, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             IdentificationType identificationType2 = new() { Id = 3 };
-            identificationType2 = _persistent.Read(identificationType2);
+            identificationType2 = _persistent.Read(identificationType2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, identificationType2.Id);
         }

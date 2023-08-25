@@ -35,7 +35,7 @@ namespace Dal.Test.Noti
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new(new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _persistent = new();
         }
         #endregion
 
@@ -46,7 +46,7 @@ namespace Dal.Test.Noti
         [Fact]
         public void TemplateListTest()
         {
-            ListResult<Template> list = _persistent.List("idtemplate = 1", "idtemplate", 1, 0);
+            ListResult<Template> list = _persistent.List("idtemplate = 1", "idtemplate", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -58,7 +58,7 @@ namespace Dal.Test.Noti
         [Fact]
         public void TemplateListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idplantilla = 1", "name", 1, 0));
+            Assert.Throws<PersistentException>(() => _persistent.List("idplantilla = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Dal.Test.Noti
         public void TemplateReadTest()
         {
             Template template = new() { Id = 1 };
-            template = _persistent.Read(template);
+            template = _persistent.Read(template, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal("Plantilla de prueba", template.Name);
         }
@@ -80,7 +80,7 @@ namespace Dal.Test.Noti
         public void TemplateReadNotFoundTest()
         {
             Template template = new() { Id = 10 };
-            template = _persistent.Read(template);
+            template = _persistent.Read(template, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, template.Id);
         }
@@ -92,7 +92,7 @@ namespace Dal.Test.Noti
         public void TemplateInsertTest()
         {
             Template template = new() { Name = "Plantilla insertada", Content = "<p>Prueba de una plantilla #{insertada}#</p>" };
-            template = _persistent.Insert(template, new() { Id = 1 });
+            template = _persistent.Insert(template, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual(0, template.Id);
         }
@@ -104,10 +104,10 @@ namespace Dal.Test.Noti
         public void TemplateUpdateTest()
         {
             Template template = new() { Id = 2, Name = "Prueba actualizada", Content = "<h3>Contenido de una plantilla #{actualizada}#</h3>" };
-            _ = _persistent.Update(template, new() { Id = 1 });
+            _ = _persistent.Update(template, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Template template2 = new() { Id = 2 };
-            template2 = _persistent.Read(template2);
+            template2 = _persistent.Read(template2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual("Plantilla a actualizar", template2.Name);
         }
@@ -119,10 +119,10 @@ namespace Dal.Test.Noti
         public void TemplateDeleteTest()
         {
             Template template = new() { Id = 3 };
-            _ = _persistent.Delete(template, new() { Id = 1 });
+            _ = _persistent.Delete(template, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Template template2 = new() { Id = 3 };
-            template2 = _persistent.Read(template2);
+            template2 = _persistent.Read(template2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, template2.Id);
         }

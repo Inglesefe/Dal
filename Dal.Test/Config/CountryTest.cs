@@ -35,7 +35,7 @@ namespace Dal.Test.Config
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new(new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _persistent = new();
         }
         #endregion
 
@@ -46,7 +46,7 @@ namespace Dal.Test.Config
         [Fact]
         public void CountryListTest()
         {
-            ListResult<Country> list = _persistent.List("idcountry = 1", "name", 1, 0);
+            ListResult<Country> list = _persistent.List("idcountry = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -58,7 +58,7 @@ namespace Dal.Test.Config
         [Fact]
         public void CountryListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idpais = 1", "name", 1, 0));
+            Assert.Throws<PersistentException>(() => _persistent.List("idpais = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Dal.Test.Config
         public void CountryReadTest()
         {
             Country country = new() { Id = 1 };
-            country = _persistent.Read(country);
+            country = _persistent.Read(country, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal("CO", country.Code);
         }
@@ -80,7 +80,7 @@ namespace Dal.Test.Config
         public void CountryReadNotFoundTest()
         {
             Country country = new() { Id = 10 };
-            country = _persistent.Read(country);
+            country = _persistent.Read(country, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, country.Id);
         }
@@ -92,7 +92,7 @@ namespace Dal.Test.Config
         public void CountryInsertTest()
         {
             Country country = new() { Code = "PR", Name = "Puerto Rico" };
-            country = _persistent.Insert(country, new() { Id = 1 });
+            country = _persistent.Insert(country, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual(0, country.Id);
         }
@@ -105,7 +105,7 @@ namespace Dal.Test.Config
         {
             Country country = new() { Code = "CO", Name = "Colombia" };
 
-            _ = Assert.Throws<PersistentException>(() => _persistent.Insert(country, new() { Id = 1 }));
+            _ = Assert.Throws<PersistentException>(() => _persistent.Insert(country, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
         }
 
         /// <summary>
@@ -115,10 +115,10 @@ namespace Dal.Test.Config
         public void CountryUpdateTest()
         {
             Country country = new() { Id = 2, Code = "PE", Name = "Perú" };
-            _ = _persistent.Update(country, new() { Id = 1 });
+            _ = _persistent.Update(country, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Country country2 = new() { Id = 2 };
-            country2 = _persistent.Read(country2);
+            country2 = _persistent.Read(country2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual("US", country2.Code);
         }
@@ -130,10 +130,10 @@ namespace Dal.Test.Config
         public void CountryDeleteTest()
         {
             Country country = new() { Id = 3 };
-            _ = _persistent.Delete(country, new() { Id = 1 });
+            _ = _persistent.Delete(country, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Country country2 = new() { Id = 3 };
-            country2 = _persistent.Read(country2);
+            country2 = _persistent.Read(country2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, country2.Id);
         }

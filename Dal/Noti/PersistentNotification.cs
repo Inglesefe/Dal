@@ -17,8 +17,7 @@ namespace Dal.Noti
         /// <summary>
         /// Inicializa la conexión a la base de datos
         /// </summary>
-        /// <param name="connection">Conexión a la base de datos</param>
-        public PersistentNotification(IDbConnection connection) : base(connection) { }
+        public PersistentNotification() : base() { }
         #endregion
 
         #region Methods
@@ -29,26 +28,25 @@ namespace Dal.Noti
         /// <param name="orders">Ordenamientos aplicados a la base de datos</param>
         /// <param name="limit">Límite de registros a traer</param>
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
+        /// <param name="connection">Conexión a la base de datos</param>
         /// <returns>Listado de notificaciones</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar las notificaciones</exception>
-        public ListResult<Notification> List(string filters, string orders, int limit, int offset)
+        public ListResult<Notification> List(string filters, string orders, int limit, int offset, IDbConnection connection)
         {
             ListResult<Notification> result;
             try
             {
                 QueryBuilder queryBuilder = new("idnotification AS id, date, `to`, subject, content, iduser as user", "notification");
-                OpenConnection();
-                List<Notification> notifications = _connection.Query<Notification>(queryBuilder.GetSelectForList(filters, orders, limit, offset)).ToList();
-                int total = _connection.ExecuteScalar<int>(queryBuilder.GetCountTotalSelectForList(filters, orders));
-                result = new(notifications, total);
+                using (connection)
+                {
+                    List<Notification> notifications = connection.Query<Notification>(queryBuilder.GetSelectForList(filters, orders, limit, offset)).ToList();
+                    int total = connection.ExecuteScalar<int>(queryBuilder.GetCountTotalSelectForList(filters, orders));
+                    result = new(notifications, total);
+                }
             }
             catch (Exception ex)
             {
                 throw new PersistentException("Error al consultar el listado de notificaciones", ex);
-            }
-            finally
-            {
-                CloseConnection();
             }
             return result;
         }
@@ -57,30 +55,29 @@ namespace Dal.Noti
         /// Consulta una notificación dada su identificador
         /// </summary>
         /// <param name="entity">Notificación a consultar</param>
+        /// <param name="connection">Conexión a la base de datos</param>
         /// <returns>Notificación con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar la notificación</exception>
-        public Notification Read(Notification entity)
+        public Notification Read(Notification entity, IDbConnection connection)
         {
             try
             {
-                OpenConnection();
-                Notification result = _connection.QuerySingleOrDefault<Notification>("SELECT idnotification AS id, date, `to`, subject, content, iduser as user FROM notification WHERE idnotification = @Id", entity);
-                if (result == null)
+                using (connection)
                 {
-                    entity = new();
-                }
-                else
-                {
-                    entity = result;
+                    Notification result = connection.QuerySingleOrDefault<Notification>("SELECT idnotification AS id, date, `to`, subject, content, iduser as user FROM notification WHERE idnotification = @Id", entity);
+                    if (result == null)
+                    {
+                        entity = new();
+                    }
+                    else
+                    {
+                        entity = result;
+                    }
                 }
             }
             catch (Exception ex)
             {
                 throw new PersistentException("Error al consultar la notificación", ex);
-            }
-            finally
-            {
-                CloseConnection();
             }
             return entity;
         }
@@ -90,23 +87,22 @@ namespace Dal.Noti
         /// </summary>
         /// <param name="entity">Notificación a insertar</param>
         /// <param name="user">Usuario que realiza la inserción</param>
+        /// <param name="connection">Conexión a la base de datos</param>
         /// <returns>Notificación insertada con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar la notificación</exception>
-        public Notification Insert(Notification entity, User user)
+        public Notification Insert(Notification entity, User user, IDbConnection connection)
         {
             try
             {
-                OpenConnection();
-                entity.Id = _connection.QuerySingle<int>("INSERT INTO notification (date, `to`, subject, content, iduser) VALUES (NOW(), @To, @Subject, @Content, @User); SELECT LAST_INSERT_ID();", entity);
-                LogInsert(entity.Id, "template", "INSERT INTO notification (subject, `to`, idtemplate, content) VALUES ('" + entity.Subject + "', '" + entity.Content + "')", user.Id);
+                using (connection)
+                {
+                    entity.Id = connection.QuerySingle<int>("INSERT INTO notification (date, `to`, subject, content, iduser) VALUES (NOW(), @To, @Subject, @Content, @User); SELECT LAST_INSERT_ID();", entity);
+                    LogInsert(entity.Id, "template", "INSERT INTO notification (subject, `to`, idtemplate, content) VALUES ('" + entity.Subject + "', '" + entity.Content + "')", user.Id, connection);
+                }
             }
             catch (Exception ex)
             {
                 throw new PersistentException("Error al insertar la notificación", ex);
-            }
-            finally
-            {
-                CloseConnection();
             }
             return entity;
         }
@@ -116,9 +112,10 @@ namespace Dal.Noti
         /// </summary>
         /// <param name="entity">Notificaión a actualizar</param>
         /// <param name="user">Usuario que realiza la actualización</param>
+        /// <param name="connection">Conexión a la base de datos</param>
         /// <returns>Notificación actualizada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al actualizar la notificación</exception>
-        public Notification Update(Notification entity, User user)
+        public Notification Update(Notification entity, User user, IDbConnection connection)
         {
             //Una notificación no se modifica una vez enviada
             return entity;
@@ -129,9 +126,10 @@ namespace Dal.Noti
         /// </summary>
         /// <param name="entity">Notificación a eliminar</param>
         /// <param name="user">Usuario que realiza la eliminación</param>
+        /// <param name="connection">Conexión a la base de datos</param>
         /// <returns>Notificación eliminada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar la plantilla</exception>
-        public Notification Delete(Notification entity, User user)
+        public Notification Delete(Notification entity, User user, IDbConnection connection)
         {
             //Una notificación no se elimina una vez enviada
             return entity;
