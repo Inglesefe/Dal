@@ -35,7 +35,7 @@ namespace Dal.Test.Config
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new(new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _persistent = new();
         }
         #endregion
 
@@ -46,7 +46,7 @@ namespace Dal.Test.Config
         [Fact]
         public void ParameterListTest()
         {
-            ListResult<Parameter> list = _persistent.List("idparameter = 1", "name", 1, 0);
+            ListResult<Parameter> list = _persistent.List("idparameter = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -58,7 +58,7 @@ namespace Dal.Test.Config
         [Fact]
         public void ParameterListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idparametro = 1", "name", 1, 0));
+            Assert.Throws<PersistentException>(() => _persistent.List("idparametro = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Dal.Test.Config
         public void ParameterReadTest()
         {
             Parameter parameter = new() { Id = 1 };
-            parameter = _persistent.Read(parameter);
+            parameter = _persistent.Read(parameter, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal("Parametro 1", parameter.Name);
         }
@@ -80,7 +80,7 @@ namespace Dal.Test.Config
         public void ParameterReadNotFoundTest()
         {
             Parameter parameter = new() { Id = 10 };
-            parameter = _persistent.Read(parameter);
+            parameter = _persistent.Read(parameter, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, parameter.Id);
         }
@@ -92,7 +92,7 @@ namespace Dal.Test.Config
         public void ParameterInsertTest()
         {
             Parameter parameter = new() { Name = "Parametro 4", Value = "Valor 4" };
-            parameter = _persistent.Insert(parameter, new() { Id = 1 });
+            parameter = _persistent.Insert(parameter, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual(0, parameter.Id);
         }
@@ -105,7 +105,7 @@ namespace Dal.Test.Config
         {
             Parameter parameter = new() { Name = "Parametro 1", Value = "Valor 5" };
 
-            _ = Assert.Throws<PersistentException>(() => _persistent.Insert(parameter, new() { Id = 1 }));
+            _ = Assert.Throws<PersistentException>(() => _persistent.Insert(parameter, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
         }
 
         /// <summary>
@@ -115,10 +115,10 @@ namespace Dal.Test.Config
         public void ParameterUpdateTest()
         {
             Parameter parameter = new() { Id = 2, Name = "Parametro 6", Value = "Valor 6" };
-            _ = _persistent.Update(parameter, new() { Id = 1 });
+            _ = _persistent.Update(parameter, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Parameter parameter2 = new() { Id = 2 };
-            parameter2 = _persistent.Read(parameter2);
+            parameter2 = _persistent.Read(parameter2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual("Parametro 2", parameter2.Name);
         }
@@ -130,10 +130,10 @@ namespace Dal.Test.Config
         public void ParameterDeleteTest()
         {
             Parameter parameter = new() { Id = 3 };
-            _ = _persistent.Delete(parameter, new() { Id = 1 });
+            _ = _persistent.Delete(parameter, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Parameter parameter2 = new() { Id = 3 };
-            parameter2 = _persistent.Read(parameter2);
+            parameter2 = _persistent.Read(parameter2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, parameter2.Id);
         }

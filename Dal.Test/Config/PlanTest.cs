@@ -35,7 +35,7 @@ namespace Dal.Test.Config
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new(new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _persistent = new();
         }
         #endregion
 
@@ -46,7 +46,7 @@ namespace Dal.Test.Config
         [Fact]
         public void PlanListTest()
         {
-            ListResult<Plan> list = _persistent.List("idplan = 1", "value", 1, 0);
+            ListResult<Plan> list = _persistent.List("idplan = 1", "value", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -58,7 +58,7 @@ namespace Dal.Test.Config
         [Fact]
         public void PlanListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idplan = 1", "valor", 1, 0));
+            Assert.Throws<PersistentException>(() => _persistent.List("idplan = 1", "valor", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Dal.Test.Config
         public void PlanReadTest()
         {
             Plan plan = new() { Id = 1 };
-            plan = _persistent.Read(plan);
+            plan = _persistent.Read(plan, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(12, plan.InstallmentsNumber);
         }
@@ -80,7 +80,7 @@ namespace Dal.Test.Config
         public void PlanReadNotFoundTest()
         {
             Plan plan = new() { Id = 10 };
-            plan = _persistent.Read(plan);
+            plan = _persistent.Read(plan, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, plan.Id);
         }
@@ -92,7 +92,7 @@ namespace Dal.Test.Config
         public void PlanInsertTest()
         {
             Plan plan = new() { InitialFee = 5000, InstallmentsNumber = 5, InstallmentValue = 250, Value = 75000, Active = true, Description = "Plan de prueba de insercion" };
-            plan = _persistent.Insert(plan, new() { Id = 1 });
+            plan = _persistent.Insert(plan, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual(0, plan.Id);
         }
@@ -104,10 +104,10 @@ namespace Dal.Test.Config
         public void PlanUpdateTest()
         {
             Plan plan = new() { Id = 2, InitialFee = 54321, InstallmentsNumber = 35, InstallmentValue = 750, Value = 85000, Active = true, Description = "Plan de prueba de actualización" };
-            _ = _persistent.Update(plan, new() { Id = 1 });
+            _ = _persistent.Update(plan, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Plan plan2 = new() { Id = 2 };
-            plan2 = _persistent.Read(plan2);
+            plan2 = _persistent.Read(plan2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual(15, plan2.InstallmentsNumber);
         }
@@ -119,10 +119,10 @@ namespace Dal.Test.Config
         public void PlanDeleteTest()
         {
             Plan plan = new() { Id = 3 };
-            _ = _persistent.Delete(plan, new() { Id = 1 });
+            _ = _persistent.Delete(plan, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Plan plan2 = new() { Id = 3 };
-            plan2 = _persistent.Read(plan2);
+            plan2 = _persistent.Read(plan2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, plan2.Id);
         }
