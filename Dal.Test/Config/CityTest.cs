@@ -35,7 +35,7 @@ namespace Dal.Test.Config
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new(new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _persistent = new();
         }
         #endregion
 
@@ -46,7 +46,7 @@ namespace Dal.Test.Config
         [Fact]
         public void CityListTest()
         {
-            ListResult<City> list = _persistent.List("ci.idcountry = 1", "ci.name", 1, 0);
+            ListResult<City> list = _persistent.List("ci.idcountry = 1", "ci.name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -58,7 +58,7 @@ namespace Dal.Test.Config
         [Fact]
         public void CityListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idpais = 1", "name", 1, 0));
+            Assert.Throws<PersistentException>(() => _persistent.List("idpais = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Dal.Test.Config
         public void CityReadTest()
         {
             City city = new() { Id = 1 };
-            city = _persistent.Read(city);
+            city = _persistent.Read(city, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal("BOG", city.Code);
         }
@@ -80,7 +80,7 @@ namespace Dal.Test.Config
         public void CityReadNotFoundTest()
         {
             City city = new() { Id = 10 };
-            city = _persistent.Read(city);
+            city = _persistent.Read(city, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, city.Id);
         }
@@ -92,7 +92,7 @@ namespace Dal.Test.Config
         public void CityInsertTest()
         {
             City city = new() { Country = new() { Id = 1 }, Code = "BUC", Name = "Bucaramanga" };
-            city = _persistent.Insert(city, new() { Id = 1 });
+            city = _persistent.Insert(city, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual(0, city.Id);
         }
@@ -105,7 +105,7 @@ namespace Dal.Test.Config
         {
             City city = new() { Country = new() { Id = 1 }, Code = "BOG", Name = "Prueba 1" };
 
-            _ = Assert.Throws<PersistentException>(() => _persistent.Insert(city, new() { Id = 1 }));
+            _ = Assert.Throws<PersistentException>(() => _persistent.Insert(city, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
         }
 
         /// <summary>
@@ -115,10 +115,10 @@ namespace Dal.Test.Config
         public void CityUpdateTest()
         {
             City city = new() { Id = 2, Country = new() { Id = 1 }, Code = "BAQ", Name = "Barranquilla" };
-            _ = _persistent.Update(city, new() { Id = 1 });
+            _ = _persistent.Update(city, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             City country2 = new() { Id = 2 };
-            country2 = _persistent.Read(country2);
+            country2 = _persistent.Read(country2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.NotEqual("MED", country2.Code);
         }
@@ -130,10 +130,10 @@ namespace Dal.Test.Config
         public void CityDeleteTest()
         {
             City city = new() { Id = 3 };
-            _ = _persistent.Delete(city, new() { Id = 1 });
+            _ = _persistent.Delete(city, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             City city2 = new() { Id = 3 };
-            city2 = _persistent.Read(city2);
+            city2 = _persistent.Read(city2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
 
             Assert.Equal(0, city2.Id);
         }
