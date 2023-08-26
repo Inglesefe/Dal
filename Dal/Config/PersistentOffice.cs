@@ -160,7 +160,7 @@ namespace Dal.Config
             {
                 using (connection)
                 {
-                    _ = connection.Execute("UPDATE office SET name = @Name, address = Address WHERE idoffice = @Id", entity);
+                    _ = connection.Execute("UPDATE office SET name = @Name, address = @Address WHERE idoffice = @Id", entity);
                     LogUpdate(entity.Id, "office", "UPDATE office SET name = '" + entity.Name + "', address = '" + entity.Address + "' WHERE idoffice = " + entity.Id, user.Id, connection);
                 }
             }
