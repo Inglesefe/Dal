@@ -36,7 +36,7 @@ namespace Dal.Config
             ListResult<Plan> result;
             try
             {
-                QueryBuilder queryBuilder = new("idplan AS id, value, initial_fee as initialFee, installments_number as installmentsNumber, installment_value as installmentValue, active", "plan");
+                QueryBuilder queryBuilder = new("idplan AS id, value, initial_fee as initialFee, installments_number as installmentsNumber, installment_value as installmentValue, active, description", "plan");
                 using (connection)
                 {
                     List<Plan> countries = connection.Query<Plan>(queryBuilder.GetSelectForList(filters, orders, limit, offset)).ToList();
@@ -64,7 +64,7 @@ namespace Dal.Config
             {
                 using (connection)
                 {
-                    Plan result = connection.QuerySingleOrDefault<Plan>("SELECT idplan AS id, value, initial_fee as initialFee, installments_number as installmentsNumber, installment_value as installmentValue, active FROM plan WHERE idplan = @Id", entity);
+                    Plan result = connection.QuerySingleOrDefault<Plan>("SELECT idplan AS id, value, initial_fee as initialFee, installments_number as installmentsNumber, installment_value as installmentValue, active, description FROM plan WHERE idplan = @Id", entity);
                     if (result == null)
                     {
                         entity = new();
@@ -126,9 +126,9 @@ namespace Dal.Config
             {
                 using (connection)
                 {
-                    _ = connection.Execute("UPDATE plan SET value = @Value, initial_fee = @InitialFee, installments_number = @InstallmentsNumber, installment_value = @InstallmentValue, active = @Active WHERE idplan = @Id", entity);
+                    _ = connection.Execute("UPDATE plan SET value = @Value, initial_fee = @InitialFee, installments_number = @InstallmentsNumber, installment_value = @InstallmentValue, active = @Active, description = @Description WHERE idplan = @Id", entity);
                     LogUpdate(entity.Id, "plan",
-                        "UPDATE plan SET value = " + entity.Value + ", initial_fee = " + entity.InitialFee + ", installments_number = " + entity.InstallmentsNumber + ", installment_value = " + entity.InstallmentValue + ", active = " + (entity.Active ? "1" : "0") + " WHERE idplan = " + entity.Id,
+                        "UPDATE plan SET value = " + entity.Value + ", initial_fee = " + entity.InitialFee + ", installments_number = " + entity.InstallmentsNumber + ", installment_value = " + entity.InstallmentValue + ", active = " + (entity.Active ? "1" : "0") + ", description = '" + entity.Description + "' WHERE idplan = " + entity.Id,
                         user.Id,
                         connection);
                 }
