@@ -1,6 +1,13 @@
-﻿using Dal.Exceptions;
+﻿using Dal.Dto;
+using Dal.Exceptions;
 using Dal.Log;
-using System.Data;
+using Dapper;
+using Entities;
+using Entities.Admon;
+using Entities.Auth;
+using Entities.Config;
+using Entities.Crm;
+using Entities.Noti;
 
 namespace Dal
 {
@@ -8,14 +15,323 @@ namespace Dal
     /// Clase base de la jerarquía de persistencias de entidades y que registra un log de auditoría en las inserciones, actualizaciones o eliminaciones
     /// </summary>
     /// <typeparam name="T">Tipo de la entidad a persistir</typeparam>
-    public abstract class PersistentBaseWithLog
+    public abstract class PersistentBaseWithLog<T> : IPersistentWithLog<T> where T : IEntity
     {
+        #region Attributes
+        /// <summary>
+        /// Conexión a la base de datos
+        /// </summary>
+        protected readonly string _connString;
+
+        /// <summary>
+        /// Persistencia en base de datos de los logs de base de datos
+        /// </summary>
+        protected readonly PersistentLogDb persistentLogDb;
+        #endregion
+
         #region Constructors
         /// <summary>
         /// Inicializa la conexión a la base de datos
         /// </summary>
-        /// <param name="connection">Conexión a la base de datos</param>
-        protected PersistentBaseWithLog() { }
+        /// <param name="connString">Cadena de conexión a la base de datos</param>
+        protected PersistentBaseWithLog(string connString)
+        {
+            _connString = connString;
+            persistentLogDb = new PersistentLogDb(connString);
+
+            SqlMapper.SetTypeMap(typeof(AccountExecutive), new CustomPropertyTypeMap(typeof(AccountExecutive),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idaccountexecutive" => type.GetProperty("Id"),
+                        "name" => type.GetProperty("Name"),
+                        "accountexecutive" => type.GetProperty("Name"),
+                        "identification" => type.GetProperty("Identification"),
+                        "account_executive_identification" => type.GetProperty("Identification"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(IdentificationType), new CustomPropertyTypeMap(typeof(IdentificationType),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "ididentificationtype" => type.GetProperty("Id"),
+                        "owner_ididentificationtype" => type.GetProperty("Id"),
+                        "beneficiary1_ididentificationtype" => type.GetProperty("Id"),
+                        "beneficiary2_ididentificationtype" => type.GetProperty("Id"),
+                        "account_executive_ididentificationtype" => type.GetProperty("Id"),
+                        "identificationtype" => type.GetProperty("Name"),
+                        "beneficiary1_identificationtype" => type.GetProperty("Name"),
+                        "beneficiary2_identificationtype" => type.GetProperty("Name"),
+                        "owner_identificationtype" => type.GetProperty("Name"),
+                        "account_executive_identificationtype" => type.GetProperty("Name"),
+                        "name" => type.GetProperty("Name"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(Application), new CustomPropertyTypeMap(typeof(Application),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idapplication" => type.GetProperty("Id"),
+                        "name" => type.GetProperty("Name"),
+                        "application" => type.GetProperty("Name"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(Role), new CustomPropertyTypeMap(typeof(Role),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idrole" => type.GetProperty("Id"),
+                        "name" => type.GetProperty("Name"),
+                        "role" => type.GetProperty("Name"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(User), new CustomPropertyTypeMap(typeof(User),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "iduser" => type.GetProperty("Id"),
+                        "name" => type.GetProperty("Name"),
+                        "user" => type.GetProperty("Name"),
+                        "login" => type.GetProperty("Login"),
+                        "active" => type.GetProperty("Active"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(City), new CustomPropertyTypeMap(typeof(City),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idcity" => type.GetProperty("Id"),
+                        "office_idcity" => type.GetProperty("Id"),
+                        "code" => type.GetProperty("Code"),
+                        "city_code" => type.GetProperty("Code"),
+                        "office_city_code" => type.GetProperty("Code"),
+                        "name" => type.GetProperty("Name"),
+                        "city_name" => type.GetProperty("Name"),
+                        "office_city_name" => type.GetProperty("Name"),
+                        "city" => type.GetProperty("Name"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(Country), new CustomPropertyTypeMap(typeof(Country),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idcountry" => type.GetProperty("Id"),
+                        "office_idcountry" => type.GetProperty("Id"),
+                        "code" => type.GetProperty("Code"),
+                        "country_code" => type.GetProperty("Code"),
+                        "office_country_code" => type.GetProperty("Code"),
+                        "country_name" => type.GetProperty("Name"),
+                        "office_country_name" => type.GetProperty("Name"),
+                        "name" => type.GetProperty("Name"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(IncomeType), new CustomPropertyTypeMap(typeof(IncomeType),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idincometype" => type.GetProperty("Id"),
+                        "code" => type.GetProperty("Code"),
+                        "name" => type.GetProperty("Name"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(Office), new CustomPropertyTypeMap(typeof(Office),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idoffice" => type.GetProperty("Id"),
+                        "name" => type.GetProperty("Name"),
+                        "office" => type.GetProperty("Name"),
+                        "address" => type.GetProperty("Address"),
+                        "office_address" => type.GetProperty("Address"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(Parameter), new CustomPropertyTypeMap(typeof(Parameter),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idparameter" => type.GetProperty("Id"),
+                        "name" => type.GetProperty("Name"),
+                        "value" => type.GetProperty("Value"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(Plan), new CustomPropertyTypeMap(typeof(Plan),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idplan" => type.GetProperty("Id"),
+                        "value" => type.GetProperty("Value"),
+                        "plan_value" => type.GetProperty("Value"),
+                        "initial_fee" => type.GetProperty("InitialFee"),
+                        "plan_initial_fee" => type.GetProperty("InitialFee"),
+                        "installments_number" => type.GetProperty("InstallmentsNumber"),
+                        "plan_installments_number" => type.GetProperty("InstallmentsNumber"),
+                        "installment_value" => type.GetProperty("InstallmentValue"),
+                        "plan_installment_value" => type.GetProperty("InstallmentValue"),
+                        "active" => type.GetProperty("Active"),
+                        "plan_active" => type.GetProperty("Active"),
+                        "description" => type.GetProperty("Description"),
+                        "plan_description" => type.GetProperty("Description"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(Scale), new CustomPropertyTypeMap(typeof(Scale),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idscale" => type.GetProperty("Id"),
+                        "name" => type.GetProperty("Name"),
+                        "scale" => type.GetProperty("Name"),
+                        "comission" => type.GetProperty("Comission"),
+                        "scale_comission" => type.GetProperty("Comission"),
+                        "validity" => type.GetProperty("Validity"),
+                        "scale_validity" => type.GetProperty("Validity"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(AccountNumber), new CustomPropertyTypeMap(typeof(AccountNumber),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idaccountnumber" => type.GetProperty("Id"),
+                        "number" => type.GetProperty("Number"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(AccountType), new CustomPropertyTypeMap(typeof(AccountType),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idaccounttype" => type.GetProperty("Id"),
+                        "name" => type.GetProperty("Name"),
+                        "accounttype" => type.GetProperty("Name"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(ConsecutiveNumber), new CustomPropertyTypeMap(typeof(ConsecutiveNumber),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idconsecutivenumber" => type.GetProperty("Id"),
+                        "number" => type.GetProperty("Number"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(ConsecutiveType), new CustomPropertyTypeMap(typeof(ConsecutiveType),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idconsecutivetype" => type.GetProperty("Id"),
+                        "name" => type.GetProperty("Name"),
+                        "consecutivetype" => type.GetProperty("Name"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(Beneficiary), new CustomPropertyTypeMap(typeof(Beneficiary),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idbeneficiary" => type.GetProperty("Id"),
+                        "idbeneficiary1" => type.GetProperty("Id"),
+                        "idbeneficiary2" => type.GetProperty("Id"),
+                        "name" => type.GetProperty("Name"),
+                        "beneficiary1" => type.GetProperty("Name"),
+                        "beneficiary2" => type.GetProperty("Name"),
+                        "identification" => type.GetProperty("Identification"),
+                        "beneficiary1_identification" => type.GetProperty("Identification"),
+                        "beneficiary2_identification" => type.GetProperty("Identification"),
+                        "relationship" => type.GetProperty("Relationship"),
+                        "beneficiary1_relationship" => type.GetProperty("Relationship"),
+                        "beneficiary2_relationship" => type.GetProperty("Relationship"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(Owner), new CustomPropertyTypeMap(typeof(Owner),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idowner" => type.GetProperty("Id"),
+                        "name" => type.GetProperty("Name"),
+                        "owner" => type.GetProperty("Name"),
+                        "identification" => type.GetProperty("Identification"),
+                        "owner_identification" => type.GetProperty("Identification"),
+                        "address_home" => type.GetProperty("AddressHome"),
+                        "owner_address_home" => type.GetProperty("AddressHome"),
+                        "address_office" => type.GetProperty("AddressOffice"),
+                        "owner_address_office" => type.GetProperty("AddressOffice"),
+                        "phone_home" => type.GetProperty("PhoneHome"),
+                        "owner_phone_home" => type.GetProperty("PhoneHome"),
+                        "phone_office" => type.GetProperty("PhoneOffice"),
+                        "owner_phone_office" => type.GetProperty("PhoneOffice"),
+                        "email" => type.GetProperty("Email"),
+                        "owner_email" => type.GetProperty("Email"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(Notification), new CustomPropertyTypeMap(typeof(Notification),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idnotification" => type.GetProperty("Id"),
+                        "date" => type.GetProperty("Date"),
+                        "to" => type.GetProperty("To"),
+                        "subject" => type.GetProperty("Subject"),
+                        "content" => type.GetProperty("Content"),
+                        "iduser" => type.GetProperty("User"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(Template), new CustomPropertyTypeMap(typeof(Template),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idtemplate" => type.GetProperty("Id"),
+                        "name" => type.GetProperty("Name"),
+                        "content" => type.GetProperty("Content"),
+                        _ => null,
+                    };
+                }));
+            SqlMapper.SetTypeMap(typeof(Registration), new CustomPropertyTypeMap(typeof(Registration),
+                (type, columnName) =>
+                {
+                    return columnName switch
+                    {
+                        "idregistration" => type.GetProperty("Id"),
+                        "date" => type.GetProperty("Date"),
+                        "contract_number" => type.GetProperty("ContractNumber"),
+                        _ => null,
+                    };
+                }));
+        }
         #endregion
 
         #region Methods
@@ -27,13 +343,11 @@ namespace Dal
         /// <param name="table">Nombre de la tabla afectada</param>
         /// <param name="sql">SQL ejecutado</param>
         /// <param name="user">Ientificador del usuario que realiza la acción</param>
-        /// <param name="connection">Conexión a la base de datos</param>
-        private static void Log(string action, long id, string table, string sql, long user, IDbConnection connection)
+        private void Log(string action, long id, string table, string sql, long user)
         {
             try
             {
-                PersistentLogDb persistentLogDb = new();
-                _ = persistentLogDb.Insert(new() { Action = action, IdTable = id, Table = table, Sql = sql, User = (int)user }, connection);
+                _ = persistentLogDb.Insert(new() { Action = action, IdTable = id, Table = table, Sql = sql, User = (int)user });
             }
             catch (PersistentException)
             {
@@ -48,10 +362,9 @@ namespace Dal
         /// <param name="table">Nombre de la tabla afectada</param>
         /// <param name="sql">SQL ejecutado</param>
         /// <param name="user">Ientificador del usuario que realiza la acción</param>
-        /// <param name="connection">Conexión a la base de datos</param>
-        protected static void LogInsert(long id, string table, string sql, long user, IDbConnection connection)
+        protected void LogInsert(long id, string table, string sql, long user)
         {
-            Log("I", id, table, sql, user, connection);
+            Log("I", id, table, sql, user);
         }
 
         /// <summary>
@@ -61,10 +374,9 @@ namespace Dal
         /// <param name="table">Nombre de la tabla afectada</param>
         /// <param name="sql">SQL ejecutado</param>
         /// <param name="user">Ientificador del usuario que realiza la acción</param>
-        /// <param name="connection">Conexión a la base de datos</param>
-        protected static void LogUpdate(long id, string table, string sql, long user, IDbConnection connection)
+        protected void LogUpdate(long id, string table, string sql, long user)
         {
-            Log("U", id, table, sql, user, connection);
+            Log("U", id, table, sql, user);
         }
 
         /// <summary>
@@ -74,11 +386,25 @@ namespace Dal
         /// <param name="table">Nombre de la tabla afectada</param>
         /// <param name="sql">SQL ejecutado</param>
         /// <param name="user">Ientificador del usuario que realiza la acción</param>
-        /// <param name="connection">Conexión a la base de datos</param>
-        protected static void LogDelete(long id, string table, string sql, long user, IDbConnection connection)
+        protected void LogDelete(long id, string table, string sql, long user)
         {
-            Log("D", id, table, sql, user, connection);
+            Log("D", id, table, sql, user);
         }
+
+        /// <inheritdoc />
+        public abstract ListResult<T> List(string filters, string orders, int limit, int offset);
+
+        /// <inheritdoc />
+        public abstract T Read(T entity);
+
+        /// <inheritdoc />
+        public abstract T Insert(T entity, User user);
+
+        /// <inheritdoc />
+        public abstract T Update(T entity, User user);
+
+        /// <inheritdoc />
+        public abstract T Delete(T entity, User user);
         #endregion
     }
 }

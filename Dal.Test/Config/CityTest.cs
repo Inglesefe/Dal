@@ -3,7 +3,6 @@ using Dal.Dto;
 using Dal.Exceptions;
 using Entities.Config;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
 
 namespace Dal.Test.Config
 {
@@ -35,7 +34,7 @@ namespace Dal.Test.Config
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new();
+            _persistent = new(_configuration.GetConnectionString("golden") ?? "");
         }
         #endregion
 
@@ -44,9 +43,9 @@ namespace Dal.Test.Config
         /// Prueba la consulta de un listado de ciudades con filtros, ordenamientos y límite
         /// </summary>
         [Fact]
-        public void CityListTest()
+        public void ListTest()
         {
-            ListResult<City> list = _persistent.List("ci.idcountry = 1", "ci.name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            ListResult<City> list = _persistent.List("idcountry = 1", "idcountry", 1, 0);
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -56,19 +55,19 @@ namespace Dal.Test.Config
         /// Prueba la consulta de un listado de ciudades con filtros, ordenamientos y límite y con errores
         /// </summary>
         [Fact]
-        public void CityListWithErrorTest()
+        public void ListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idpais = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
+            Assert.Throws<PersistentException>(() => _persistent.List("idpais = 1", "name", 1, 0));
         }
 
         /// <summary>
         /// Prueba la consulta de una ciudad dada su identificador
         /// </summary>
         [Fact]
-        public void CityReadTest()
+        public void ReadTest()
         {
             City city = new() { Id = 1 };
-            city = _persistent.Read(city, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            city = _persistent.Read(city);
 
             Assert.Equal("BOG", city.Code);
         }
@@ -77,10 +76,10 @@ namespace Dal.Test.Config
         /// Prueba la consulta de una ciudad que no existe dado su identificador
         /// </summary>
         [Fact]
-        public void CityReadNotFoundTest()
+        public void ReadNotFoundTest()
         {
             City city = new() { Id = 10 };
-            city = _persistent.Read(city, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            city = _persistent.Read(city);
 
             Assert.Equal(0, city.Id);
         }
@@ -89,10 +88,10 @@ namespace Dal.Test.Config
         /// Prueba la inserción de una ciudad
         /// </summary>
         [Fact]
-        public void CityInsertTest()
+        public void InsertTest()
         {
             City city = new() { Country = new() { Id = 1 }, Code = "BUC", Name = "Bucaramanga" };
-            city = _persistent.Insert(city, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            city = _persistent.Insert(city, new() { Id = 1 });
 
             Assert.NotEqual(0, city.Id);
         }
@@ -101,24 +100,24 @@ namespace Dal.Test.Config
         /// Prueba la inserción de una ciudad con código duplicado
         /// </summary>
         [Fact]
-        public void CityInsertDuplicateTest()
+        public void InsertDuplicateTest()
         {
             City city = new() { Country = new() { Id = 1 }, Code = "BOG", Name = "Prueba 1" };
 
-            _ = Assert.Throws<PersistentException>(() => _persistent.Insert(city, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
+            _ = Assert.Throws<PersistentException>(() => _persistent.Insert(city, new() { Id = 1 }));
         }
 
         /// <summary>
         /// Prueba la actualización de una ciudad
         /// </summary>
         [Fact]
-        public void CityUpdateTest()
+        public void UpdateTest()
         {
             City city = new() { Id = 2, Country = new() { Id = 1 }, Code = "BAQ", Name = "Barranquilla" };
-            _ = _persistent.Update(city, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _ = _persistent.Update(city, new() { Id = 1 });
 
             City country2 = new() { Id = 2 };
-            country2 = _persistent.Read(country2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            country2 = _persistent.Read(country2);
 
             Assert.NotEqual("MED", country2.Code);
         }
@@ -127,13 +126,13 @@ namespace Dal.Test.Config
         /// Prueba la eliminación de una ciudad
         /// </summary>
         [Fact]
-        public void CityDeleteTest()
+        public void DeleteTest()
         {
             City city = new() { Id = 3 };
-            _ = _persistent.Delete(city, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _ = _persistent.Delete(city, new() { Id = 1 });
 
             City city2 = new() { Id = 3 };
-            city2 = _persistent.Read(city2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            city2 = _persistent.Read(city2);
 
             Assert.Equal(0, city2.Id);
         }
