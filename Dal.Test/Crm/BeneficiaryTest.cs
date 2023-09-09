@@ -150,10 +150,10 @@ namespace Dal.Test.Crm
         [Fact]
         public void DeleteTest()
         {
-            Beneficiary beneficiary = new() { Id = 3 };
+            Beneficiary beneficiary = new() { Id = 4 };
             _ = _persistent.Delete(beneficiary, new() { Id = 1 });
 
-            Beneficiary beneficiary2 = new() { Id = 3 };
+            Beneficiary beneficiary2 = new() { Id = 4 };
             beneficiary2 = _persistent.Read(beneficiary2);
 
             Assert.Equal(0, beneficiary2.Id);

@@ -473,6 +473,7 @@ FROM
 INSERT INTO beneficiary (idowner, name, ididentificationtype, identification, relationship) VALUES (1, 'Pedro Perez', 1, '111111111', 'hijo');
 INSERT INTO beneficiary (idowner, name, ididentificationtype, identification, relationship) VALUES (1, 'Maria Martinez', 1, '222222222', 'hija');
 INSERT INTO beneficiary (idowner, name, ididentificationtype, identification, relationship) VALUES (1, 'Hernan Hernandez', 1, '333333333', 'esposa');
+INSERT INTO beneficiary (idowner, name, ididentificationtype, identification, relationship) VALUES (1, 'Para eliminar', 1, '1111122222', 'primo');
 
 /* Crear tabla de tipos de consecutivo */
 CREATE TABLE consecutive_type (
