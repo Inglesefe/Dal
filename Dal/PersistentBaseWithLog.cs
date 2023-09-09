@@ -185,7 +185,7 @@ namespace Dal
                     _ => null,
                 };
             }
-            if (type == typeof(Role))
+            if (type == typeof(User))
             {
                 return columnName switch
                 {
