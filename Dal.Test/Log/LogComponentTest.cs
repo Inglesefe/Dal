@@ -3,7 +3,6 @@ using Dal.Exceptions;
 using Dal.Log;
 using Entities.Log;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
 
 namespace Dal.Test.Log
 {
@@ -35,7 +34,7 @@ namespace Dal.Test.Log
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new();
+            _persistent = new(_configuration.GetConnectionString("golden") ?? "");
         }
         #endregion
 
@@ -46,7 +45,7 @@ namespace Dal.Test.Log
         [Fact]
         public void LogComponentListTest()
         {
-            ListResult<LogComponent> list = _persistent.List("idlog = 1", "idlog", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            ListResult<LogComponent> list = _persistent.List("idlog = 1", "idlog", 1, 0);
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -58,7 +57,7 @@ namespace Dal.Test.Log
         [Fact]
         public void LogComponentListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idregistro = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
+            Assert.Throws<PersistentException>(() => _persistent.List("idregistro = 1", "name", 1, 0));
         }
 
         /// <summary>
@@ -68,9 +67,9 @@ namespace Dal.Test.Log
         public void LogComponentReadTest()
         {
             LogComponent log = new() { Id = 1 };
-            log = _persistent.Read(log, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            log = _persistent.Read(log);
 
-            Assert.Equal("Log.Test", log.Component);
+            Assert.Equal("Log", log.Controller);
         }
 
         /// <summary>
@@ -80,7 +79,7 @@ namespace Dal.Test.Log
         public void LogComponentReadNotFoundTest()
         {
             LogComponent log = new() { Id = 10 };
-            log = _persistent.Read(log, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            log = _persistent.Read(log);
 
             Assert.Equal(0, log.Id);
         }
@@ -91,8 +90,8 @@ namespace Dal.Test.Log
         [Fact]
         public void LogComponentInsertTest()
         {
-            LogComponent log = new() { Type = "I", Component = "Log.Test", Description = "Prueba de insercion de log con usuario", User = 1 };
-            log = _persistent.Insert(log, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            LogComponent log = new() { Type = "I", Controller = "Log3", Method = "Test3", Input = "Entrada 3", Output = "Salida 3", User = 1 };
+            log = _persistent.Insert(log);
 
             Assert.NotEqual(0, log.Id);
         }
@@ -104,7 +103,7 @@ namespace Dal.Test.Log
         public void LogComponentUpdateTest()
         {
             LogComponent log = new() { Id = 1 };
-            log = _persistent.Update(log, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            log = _persistent.Update(log);
 
             Assert.Equal(1, log.Id);
         }
@@ -116,7 +115,7 @@ namespace Dal.Test.Log
         public void LogComponentDeleteTest()
         {
             LogComponent log = new() { Id = 1 };
-            log = _persistent.Delete(log, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            log = _persistent.Delete(log);
 
             Assert.Equal(1, log.Id);
         }

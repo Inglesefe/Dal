@@ -3,7 +3,6 @@ using Dal.Exceptions;
 using Dal.Noti;
 using Entities.Noti;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
 
 namespace Dal.Test.Noti
 {
@@ -35,7 +34,7 @@ namespace Dal.Test.Noti
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new();
+            _persistent = new(_configuration.GetConnectionString("golden") ?? "");
         }
         #endregion
 
@@ -46,7 +45,7 @@ namespace Dal.Test.Noti
         [Fact]
         public void NotificationListTest()
         {
-            ListResult<Notification> list = _persistent.List("idnotification = 1", "idnotification", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            ListResult<Notification> list = _persistent.List("idnotification = 1", "idnotification", 1, 0);
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -58,7 +57,7 @@ namespace Dal.Test.Noti
         [Fact]
         public void NotificationListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idnotificacion = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
+            Assert.Throws<PersistentException>(() => _persistent.List("idnotificacion = 1", "name", 1, 0));
         }
 
         /// <summary>
@@ -68,7 +67,7 @@ namespace Dal.Test.Noti
         public void NotificationReadTest()
         {
             Notification notification = new() { Id = 1 };
-            notification = _persistent.Read(notification, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            notification = _persistent.Read(notification);
 
             Assert.Equal("leandrobaena@gmail.com", notification.To);
         }
@@ -80,7 +79,7 @@ namespace Dal.Test.Noti
         public void NotificationReadNotFoundTest()
         {
             Notification notification = new() { Id = 10 };
-            notification = _persistent.Read(notification, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            notification = _persistent.Read(notification);
 
             Assert.Equal(0, notification.Id);
         }
@@ -92,7 +91,7 @@ namespace Dal.Test.Noti
         public void NotificationInsertTest()
         {
             Notification notification = new() { To = "leandrobaena@gmail.com", Subject = "Prueba de una notificación", Content = "<p>Prueba de notificación</p>", User = 1 };
-            notification = _persistent.Insert(notification, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            notification = _persistent.Insert(notification, new() { Id = 1 });
 
             Assert.NotEqual(0, notification.Id);
         }

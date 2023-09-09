@@ -3,6 +3,7 @@ using Dal.Exceptions;
 using Dal.Utils;
 using Dapper;
 using Entities.Log;
+using MySql.Data.MySqlClient;
 using System.Data;
 
 namespace Dal.Log
@@ -10,14 +11,14 @@ namespace Dal.Log
     /// <summary>
     /// Realiza la persistencia de los registros de base de datos en la base de datos
     /// </summary>
-    public class PersistentLogDb : IPersistentBase<LogDb>
+    public class PersistentLogDb : PersistentBase<LogDb>
     {
         #region Constructors
         /// <summary>
         /// Inicializa la conexión a la bse de datos
         /// </summary>
-        /// <param name="connection">Conexión a la base de datos</param>
-        public PersistentLogDb() { }
+        /// <param name="connString">Cadena de conexión a la base de datos</param>
+        public PersistentLogDb(string connString) : base(connString) { }
         #endregion
 
         #region Methods
@@ -28,21 +29,18 @@ namespace Dal.Log
         /// <param name="orders">Ordenamientos aplicados a la base de datos</param>
         /// <param name="limit">Límite de registros a traer</param>
         /// <param name="offset">Corrimiento desde el que se cuenta el número de registros</param>
-        /// <param name="connection">Conexión a la base de datos</param>
         /// <returns>Listado de registros</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar los registros</exception>
-        public ListResult<LogDb> List(string filters, string orders, int limit, int offset, IDbConnection connection)
+        public override ListResult<LogDb> List(string filters, string orders, int limit, int offset)
         {
             ListResult<LogDb> result;
             try
             {
-                QueryBuilder queryBuilder = new("idlog AS id, date, action, idtable, `table`, `sql`, iduser as user", "log_db");
-                using (connection)
-                {
-                    List<LogDb> logs = connection.Query<LogDb>(queryBuilder.GetSelectForList(filters, orders, limit, offset)).ToList();
-                    int total = connection.ExecuteScalar<int>(queryBuilder.GetCountTotalSelectForList(filters, orders));
-                    result = new(logs, total);
-                }
+                QueryBuilder queryBuilder = new("idlog, date, action, idtable, `table`, `sql`, iduser", "log_db");
+                using IDbConnection connection = new MySqlConnection(_connString);
+                List<LogDb> logs = connection.Query<LogDb>(queryBuilder.GetSelectForList(filters, orders, limit, offset)).ToList();
+                int total = connection.ExecuteScalar<int>(queryBuilder.GetCountTotalSelectForList(filters, orders));
+                result = new(logs, total);
             }
             catch (Exception ex)
             {
@@ -55,24 +53,21 @@ namespace Dal.Log
         /// Consulta un registro dado su identificador
         /// </summary>
         /// <param name="entity">Registro a consultar</param>
-        /// <param name="connection">Conexión a la base de datos</param>
-        /// <returns>Registro con los datos cargados desde la base de datos o null si no lo pudo encontrar</returns>
+        /// <returns>Registro con los datos cargados desde la base de datos o datos por defecto si no lo pudo encontrar</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al consultar el registro</exception>
-        public LogDb Read(LogDb entity, IDbConnection connection)
+        public override LogDb Read(LogDb entity)
         {
             try
             {
-                using (connection)
+                using IDbConnection connection = new MySqlConnection(_connString);
+                LogDb result = connection.QuerySingleOrDefault<LogDb>("SELECT idlog, date, action, idtable, `table`, `sql`, iduser FROM log_db WHERE idlog = @Id", entity);
+                if (result == null)
                 {
-                    LogDb result = connection.QuerySingleOrDefault<LogDb>("SELECT idlog AS id, date, action, idtable, `table`, `sql`, iduser as user FROM log_db WHERE idlog = @Id", entity);
-                    if (result == null)
-                    {
-                        entity = new();
-                    }
-                    else
-                    {
-                        entity = result;
-                    }
+                    entity = new();
+                }
+                else
+                {
+                    entity = result;
                 }
             }
             catch (Exception ex)
@@ -86,19 +81,16 @@ namespace Dal.Log
         /// Inserta un registro en la base de datos
         /// </summary>
         /// <param name="entity">Registro a insertar</param>
-        /// <param name="connection">Conexión a la base de datos</param>
         /// <returns>Registro insertado con el id generado por la base de datos</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al insertar el registro</exception>
-        public LogDb Insert(LogDb entity, IDbConnection connection)
+        public override LogDb Insert(LogDb entity)
         {
             try
             {
-                using (connection)
-                {
-                    entity.Id = connection.QuerySingle<long>(
-                        "INSERT INTO log_db (date, action, idtable, `table`, `sql`, iduser) VALUES (NOW(), @Action, @IdTable, @Table, @Sql, @User); SELECT LAST_INSERT_ID();",
-                        entity);
-                }
+                using IDbConnection connection = new MySqlConnection(_connString);
+                entity.Id = connection.QuerySingle<long>(
+                    "INSERT INTO log_db (date, action, idtable, `table`, `sql`, iduser) VALUES (NOW(), @Action, @IdTable, @Table, @Sql, @User); SELECT LAST_INSERT_ID();",
+                    entity);
             }
             catch (Exception ex)
             {
@@ -111,9 +103,8 @@ namespace Dal.Log
         /// No hace nada con la actualización de un log
         /// </summary>
         /// <param name="entity">Log a actualizar</param>
-        /// <param name="connection">Conexión a la base de datos</param>
         /// <returns>Log actualizado</returns>
-        public LogDb Update(LogDb entity, IDbConnection connection)
+        public override LogDb Update(LogDb entity)
         {
             return entity;
         }
@@ -122,9 +113,8 @@ namespace Dal.Log
         /// No hace nada con la eliminación de un log
         /// </summary>
         /// <param name="entity">Log a eliminar</param>
-        /// <param name="connection">Conexión a la base de datos</param>
         /// <returns>Log eliminado</returns>
-        public LogDb Delete(LogDb entity, IDbConnection connection)
+        public override LogDb Delete(LogDb entity)
         {
             return entity;
         }

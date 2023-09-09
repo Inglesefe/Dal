@@ -3,7 +3,6 @@ using Dal.Dto;
 using Dal.Exceptions;
 using Entities.Auth;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
 
 namespace Dal.Test.Auth
 {
@@ -35,7 +34,7 @@ namespace Dal.Test.Auth
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new();
+            _persistent = new(_configuration.GetConnectionString("golden") ?? "");
         }
         #endregion
 
@@ -44,9 +43,9 @@ namespace Dal.Test.Auth
         /// Prueba la consulta de un listado de usuarios con filtros, ordenamientos y límite
         /// </summary>
         [Fact]
-        public void UserListTest()
+        public void ListTest()
         {
-            ListResult<User> list = _persistent.List("iduser = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            ListResult<User> list = _persistent.List("iduser = 1", "name", 1, 0);
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -56,19 +55,19 @@ namespace Dal.Test.Auth
         /// Prueba la consulta de un listado de usuarios con filtros, ordenamientos y límite y con errores
         /// </summary>
         [Fact]
-        public void UserListWithErrorTest()
+        public void ListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idusuario = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
+            Assert.Throws<PersistentException>(() => _persistent.List("idusuario = 1", "name", 1, 0));
         }
 
         /// <summary>
         /// Prueba la consulta de un usuario dado su identificador
         /// </summary>
         [Fact]
-        public void UserReadTest()
+        public void ReadTest()
         {
             User user = new() { Id = 1 };
-            user = _persistent.Read(user, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            user = _persistent.Read(user);
 
             Assert.Equal("leandrobaena@gmail.com", user.Login);
         }
@@ -77,10 +76,10 @@ namespace Dal.Test.Auth
         /// Prueba la consulta de un usuario que no existe dado su identificador
         /// </summary>
         [Fact]
-        public void UserReadNotFoundTest()
+        public void ReadNotFoundTest()
         {
             User user = new() { Id = 10 };
-            user = _persistent.Read(user, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            user = _persistent.Read(user);
 
             Assert.Equal(0, user.Id);
         }
@@ -89,10 +88,10 @@ namespace Dal.Test.Auth
         /// Prueba la inserción de un usuario
         /// </summary>
         [Fact]
-        public void UserInsertTest()
+        public void InsertTest()
         {
             User user = new() { Login = "insertado@prueba.com", Name = "Prueba 1", Active = true };
-            user = _persistent.Insert(user, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            user = _persistent.Insert(user, new() { Id = 1 });
 
             Assert.NotEqual(0, user.Id);
         }
@@ -101,24 +100,24 @@ namespace Dal.Test.Auth
         /// Prueba la inserción de un usuario con login duplicado
         /// </summary>
         [Fact]
-        public void UserInsertDuplicateTest()
+        public void InsertDuplicateTest()
         {
             User user = new() { Login = "leandrobaena@gmail.com", Name = "Prueba insertar", Active = true };
 
-            _ = Assert.Throws<PersistentException>(() => _persistent.Insert(user, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
+            _ = Assert.Throws<PersistentException>(() => _persistent.Insert(user, new() { Id = 1 }));
         }
 
         /// <summary>
         /// Prueba la actualización de un usuario
         /// </summary>
         [Fact]
-        public void UserUpdateTest()
+        public void UpdateTest()
         {
             User user = new() { Id = 2, Login = "otrologin@gmail.com", Name = "Prueba actualizar", Active = false };
-            _ = _persistent.Update(user, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _ = _persistent.Update(user, new() { Id = 1 });
 
             User user2 = new() { Id = 2 };
-            user2 = _persistent.Read(user2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            user2 = _persistent.Read(user2);
 
             Assert.NotEqual("actualizame@gmail.com", user2.Name);
             Assert.False(user2.Active);
@@ -128,13 +127,13 @@ namespace Dal.Test.Auth
         /// Prueba la eliminación de un usuario
         /// </summary>
         [Fact]
-        public void UserDeleteTest()
+        public void DeleteTest()
         {
             User user = new() { Id = 3 };
-            _ = _persistent.Delete(user, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _ = _persistent.Delete(user, new() { Id = 1 });
 
             User user2 = new() { Id = 3 };
-            user2 = _persistent.Read(user2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            user2 = _persistent.Read(user2);
 
             Assert.Equal(0, user2.Id);
         }
@@ -143,10 +142,10 @@ namespace Dal.Test.Auth
         /// Prueba la consulta de un usuario dado su login y contraseña
         /// </summary>
         [Fact]
-        public void UserReadByLoginAndPasswordTest()
+        public void ReadByLoginAndPasswordTest()
         {
             User user = new() { Login = "leandrobaena@gmail.com" };
-            user = _persistent.ReadByLoginAndPassword(user, "Prueba123", new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            user = _persistent.ReadByLoginAndPassword(user, "Prueba123");
 
             Assert.NotEqual(0, user.Id);
         }
@@ -155,10 +154,10 @@ namespace Dal.Test.Auth
         /// Prueba la consulta de un usuario que no existe dado su login y password
         /// </summary>
         [Fact]
-        public void UserReadByLoginAndPasswordWithErrorTest()
+        public void ReadByLoginAndPasswordWithErrorTest()
         {
             User user = new() { Login = "actualizame@gmail.com" };
-            user = _persistent.ReadByLoginAndPassword(user, "Errada", new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            user = _persistent.ReadByLoginAndPassword(user, "Errada");
 
             Assert.Equal(0, user.Id);
         }
@@ -167,10 +166,10 @@ namespace Dal.Test.Auth
         /// Prueba la consulta de un usuario dado su login
         /// </summary>
         [Fact]
-        public void UserReadByLoginTest()
+        public void ReadByLoginTest()
         {
             User user = new() { Login = "leandrobaena@gmail.com" };
-            user = _persistent.ReadByLogin(user, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            user = _persistent.ReadByLogin(user);
 
             Assert.NotEqual(0, user.Id);
         }
@@ -179,10 +178,10 @@ namespace Dal.Test.Auth
         /// Prueba la consulta de un usuario dado su login que no existe
         /// </summary>
         [Fact]
-        public void UserReadByLoginNonExistentTest()
+        public void ReadByLoginNonExistentTest()
         {
             User user = new() { Login = "pepitoperez@inglesefe.com.co" };
-            user = _persistent.ReadByLogin(user, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            user = _persistent.ReadByLogin(user);
 
             Assert.Equal(0, user.Id);
         }
@@ -191,10 +190,10 @@ namespace Dal.Test.Auth
         /// Prueba la consulta de un usuario inactivo dado su login y password
         /// </summary>
         [Fact]
-        public void UserReadByLoginAndPasswordInactiveTest()
+        public void ReadByLoginAndPasswordInactiveTest()
         {
             User user = new() { Login = "inactivo@gmail.com" };
-            user = _persistent.ReadByLoginAndPassword(user, "Prueba123", new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            user = _persistent.ReadByLoginAndPassword(user, "Prueba123");
 
             Assert.Equal(0, user.Id);
         }
@@ -203,12 +202,12 @@ namespace Dal.Test.Auth
         /// Prueba la actualización de la contraseña de un usuario
         /// </summary>
         [Fact]
-        public void UserUpdatePasswordTest()
+        public void UpdatePasswordTest()
         {
             User user = new() { Id = 1, Login = "leandrobaena@gmail.com" };
-            _ = _persistent.UpdatePassword(user, "Prueba123", new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _ = _persistent.UpdatePassword(user, "Prueba123", new() { Id = 1 });
 
-            user = _persistent.ReadByLoginAndPassword(user, "Prueba123", new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            user = _persistent.ReadByLoginAndPassword(user, "Prueba123");
 
             Assert.NotEqual(0, user.Id);
         }
@@ -217,9 +216,9 @@ namespace Dal.Test.Auth
         /// Prueba la consulta de un listado de roles de un usuario con filtros, ordenamientos y límite
         /// </summary>
         [Fact]
-        public void UserListRolesTest()
+        public void ListRolesTest()
         {
-            ListResult<Role> list = _persistent.ListRoles("", "", 10, 0, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            ListResult<Role> list = _persistent.ListRoles("", "", 10, 0, new() { Id = 1 });
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -229,18 +228,18 @@ namespace Dal.Test.Auth
         /// Prueba la consulta de un listado de roles de un usuario con filtros, ordenamientos y límite y con errores
         /// </summary>
         [Fact]
-        public void UserListRolesWithErrorTest()
+        public void ListRolesWithErrorTest()
         {
-            _ = Assert.Throws<PersistentException>(() => _persistent.ListRoles("idusuario = 1", "name", 10, 0, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
+            _ = Assert.Throws<PersistentException>(() => _persistent.ListRoles("idusuario = 1", "name", 10, 0, new() { Id = 1 }));
         }
 
         /// <summary>
         /// Prueba la consulta de un listado de roles no asignados a un usuario con filtros, ordenamientos y límite
         /// </summary>
         [Fact]
-        public void UserListNotRolesTest()
+        public void ListNotRolesTest()
         {
-            ListResult<Role> list = _persistent.ListNotRoles("", "", 10, 0, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            ListResult<Role> list = _persistent.ListNotRoles("", "", 10, 0, new() { Id = 1 });
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -250,9 +249,9 @@ namespace Dal.Test.Auth
         /// Prueba la inserción de un rol de un usuario
         /// </summary>
         [Fact]
-        public void UserInsertRoleTest()
+        public void InsertRoleTest()
         {
-            Role role = _persistent.InsertRole(new() { Id = 4 }, new() { Id = 1 }, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            Role role = _persistent.InsertRole(new() { Id = 4 }, new() { Id = 1 }, new() { Id = 1 });
 
             Assert.NotNull(role);
         }
@@ -261,19 +260,19 @@ namespace Dal.Test.Auth
         /// Prueba la inserción de un rol de un usuario duplicado
         /// </summary>
         [Fact]
-        public void UserInsertRoleDuplicateTest()
+        public void InsertRoleDuplicateTest()
         {
-            _ = Assert.Throws<PersistentException>(() => _persistent.InsertRole(new() { Id = 1 }, new() { Id = 1 }, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
+            _ = Assert.Throws<PersistentException>(() => _persistent.InsertRole(new() { Id = 1 }, new() { Id = 1 }, new() { Id = 1 }));
         }
 
         /// <summary>
         /// Prueba la eliminación de un rol de un usuario
         /// </summary>
         [Fact]
-        public void UserDeleteRoleTest()
+        public void DeleteRoleTest()
         {
-            _ = _persistent.DeleteRole(new() { Id = 2 }, new() { Id = 1 }, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
-            ListResult<Role> list = _persistent.ListRoles("r.idrole = 2", "", 10, 0, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _ = _persistent.DeleteRole(new() { Id = 2 }, new() { Id = 1 }, new() { Id = 1 });
+            ListResult<Role> list = _persistent.ListRoles("idrole = 2", "", 10, 0, new() { Id = 1 });
 
             Assert.Equal(0, list.Total);
         }

@@ -3,7 +3,6 @@ using Dal.Exceptions;
 using Dal.Log;
 using Entities.Log;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
 
 namespace Dal.Test.Log
 {
@@ -35,7 +34,7 @@ namespace Dal.Test.Log
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new();
+            _persistent = new(_configuration.GetConnectionString("golden") ?? "");
         }
         #endregion
 
@@ -46,7 +45,7 @@ namespace Dal.Test.Log
         [Fact]
         public void LogDbListTest()
         {
-            ListResult<LogDb> list = _persistent.List("idlog = 1", "idlog", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            ListResult<LogDb> list = _persistent.List("idlog = 1", "idlog", 1, 0);
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -58,7 +57,7 @@ namespace Dal.Test.Log
         [Fact]
         public void LogDbListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idregistro = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
+            Assert.Throws<PersistentException>(() => _persistent.List("idregistro = 1", "name", 1, 0));
         }
 
         /// <summary>
@@ -68,7 +67,7 @@ namespace Dal.Test.Log
         public void LogDbReadTest()
         {
             LogDb log = new() { Id = 1 };
-            log = _persistent.Read(log, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            log = _persistent.Read(log);
 
             Assert.Equal("Tabla1", log.Table);
         }
@@ -80,7 +79,7 @@ namespace Dal.Test.Log
         public void LogDbReadNotFoundTest()
         {
             LogDb log = new() { Id = 1000 };
-            log = _persistent.Read(log, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            log = _persistent.Read(log);
 
             Assert.Equal(0, log.Id);
         }
@@ -92,7 +91,7 @@ namespace Dal.Test.Log
         public void LogDbInsertTest()
         {
             LogDb log = new() { Action = "I", IdTable = 1, Table = "Tabla1", Sql = "INSERT INTO Tabla1 (campo1) VALUES ('prueba insercion')", User = 1 };
-            log = _persistent.Insert(log, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            log = _persistent.Insert(log);
 
             Assert.NotEqual(0, log.Id);
         }
@@ -104,7 +103,7 @@ namespace Dal.Test.Log
         public void LogDbUpdateTest()
         {
             LogDb log = new() { Id = 1 };
-            log = _persistent.Update(log, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            log = _persistent.Update(log);
 
             Assert.Equal(1, log.Id);
         }
@@ -116,7 +115,7 @@ namespace Dal.Test.Log
         public void LogDbDeleteTest()
         {
             LogDb log = new() { Id = 1 };
-            log = _persistent.Delete(log, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            log = _persistent.Delete(log);
 
             Assert.Equal(1, log.Id);
         }

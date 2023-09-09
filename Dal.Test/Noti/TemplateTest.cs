@@ -3,7 +3,6 @@ using Dal.Exceptions;
 using Dal.Noti;
 using Entities.Noti;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
 
 namespace Dal.Test.Noti
 {
@@ -35,7 +34,7 @@ namespace Dal.Test.Noti
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new();
+            _persistent = new(_configuration.GetConnectionString("golden") ?? "");
         }
         #endregion
 
@@ -46,7 +45,7 @@ namespace Dal.Test.Noti
         [Fact]
         public void TemplateListTest()
         {
-            ListResult<Template> list = _persistent.List("idtemplate = 1", "idtemplate", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            ListResult<Template> list = _persistent.List("idtemplate = 1", "idtemplate", 1, 0);
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -58,7 +57,7 @@ namespace Dal.Test.Noti
         [Fact]
         public void TemplateListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idplantilla = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
+            Assert.Throws<PersistentException>(() => _persistent.List("idplantilla = 1", "name", 1, 0));
         }
 
         /// <summary>
@@ -68,7 +67,7 @@ namespace Dal.Test.Noti
         public void TemplateReadTest()
         {
             Template template = new() { Id = 1 };
-            template = _persistent.Read(template, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            template = _persistent.Read(template);
 
             Assert.Equal("Plantilla de prueba", template.Name);
         }
@@ -80,7 +79,7 @@ namespace Dal.Test.Noti
         public void TemplateReadNotFoundTest()
         {
             Template template = new() { Id = 10 };
-            template = _persistent.Read(template, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            template = _persistent.Read(template);
 
             Assert.Equal(0, template.Id);
         }
@@ -92,7 +91,7 @@ namespace Dal.Test.Noti
         public void TemplateInsertTest()
         {
             Template template = new() { Name = "Plantilla insertada", Content = "<p>Prueba de una plantilla #{insertada}#</p>" };
-            template = _persistent.Insert(template, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            template = _persistent.Insert(template, new() { Id = 1 });
 
             Assert.NotEqual(0, template.Id);
         }
@@ -104,10 +103,10 @@ namespace Dal.Test.Noti
         public void TemplateUpdateTest()
         {
             Template template = new() { Id = 2, Name = "Prueba actualizada", Content = "<h3>Contenido de una plantilla #{actualizada}#</h3>" };
-            _ = _persistent.Update(template, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _ = _persistent.Update(template, new() { Id = 1 });
 
             Template template2 = new() { Id = 2 };
-            template2 = _persistent.Read(template2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            template2 = _persistent.Read(template2);
 
             Assert.NotEqual("Plantilla a actualizar", template2.Name);
         }
@@ -119,10 +118,10 @@ namespace Dal.Test.Noti
         public void TemplateDeleteTest()
         {
             Template template = new() { Id = 3 };
-            _ = _persistent.Delete(template, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _ = _persistent.Delete(template, new() { Id = 1 });
 
             Template template2 = new() { Id = 3 };
-            template2 = _persistent.Read(template2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            template2 = _persistent.Read(template2);
 
             Assert.Equal(0, template2.Id);
         }

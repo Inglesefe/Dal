@@ -3,7 +3,6 @@ using Dal.Dto;
 using Dal.Exceptions;
 using Entities.Config;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
 
 namespace Dal.Test.Config
 {
@@ -35,7 +34,7 @@ namespace Dal.Test.Config
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
                 .Build();
-            _persistent = new();
+            _persistent = new(_configuration.GetConnectionString("golden") ?? "");
         }
         #endregion
 
@@ -44,9 +43,9 @@ namespace Dal.Test.Config
         /// Prueba la consulta de un listado de tipos de ingreso con filtros, ordenamientos y límite
         /// </summary>
         [Fact]
-        public void IncomeTypeListTest()
+        public void ListTest()
         {
-            ListResult<IncomeType> list = _persistent.List("idincometype = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            ListResult<IncomeType> list = _persistent.List("idincometype = 1", "name", 1, 0);
 
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
@@ -56,19 +55,19 @@ namespace Dal.Test.Config
         /// Prueba la consulta de un listado de tipos de ingreso con filtros, ordenamientos y límite y con errores
         /// </summary>
         [Fact]
-        public void IncomeTypeListWithErrorTest()
+        public void ListWithErrorTest()
         {
-            Assert.Throws<PersistentException>(() => _persistent.List("idtipoingreso = 1", "name", 1, 0, new MySqlConnection(_configuration.GetConnectionString("golden") ?? "")));
+            Assert.Throws<PersistentException>(() => _persistent.List("idtipoingreso = 1", "name", 1, 0));
         }
 
         /// <summary>
         /// Prueba la consulta de un tipo de ingreso dada su identificador
         /// </summary>
         [Fact]
-        public void IncomeTypeReadTest()
+        public void ReadTest()
         {
             IncomeType incomeType = new() { Id = 1 };
-            incomeType = _persistent.Read(incomeType, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            incomeType = _persistent.Read(incomeType);
 
             Assert.Equal("CI", incomeType.Code);
         }
@@ -77,10 +76,10 @@ namespace Dal.Test.Config
         /// Prueba la consulta de un tipo de ingreso que no existe dado su identificador
         /// </summary>
         [Fact]
-        public void IncomeTypeReadNotFoundTest()
+        public void ReadNotFoundTest()
         {
             IncomeType incomeType = new() { Id = 10 };
-            incomeType = _persistent.Read(incomeType, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            incomeType = _persistent.Read(incomeType);
 
             Assert.Equal(0, incomeType.Id);
         }
@@ -89,10 +88,10 @@ namespace Dal.Test.Config
         /// Prueba la inserción de un tipo de ingreso
         /// </summary>
         [Fact]
-        public void IncomeTypeInsertTest()
+        public void InsertTest()
         {
             IncomeType incomeType = new() { Code = "CF", Name = "Cheques posfechados" };
-            incomeType = _persistent.Insert(incomeType, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            incomeType = _persistent.Insert(incomeType, new() { Id = 1 });
 
             Assert.NotEqual(0, incomeType.Id);
         }
@@ -101,13 +100,13 @@ namespace Dal.Test.Config
         /// Prueba la actualización de un tipo de ingreso
         /// </summary>
         [Fact]
-        public void IncomeTypeUpdateTest()
+        public void UpdateTest()
         {
             IncomeType incomeType = new() { Id = 2, Code = "CT", Name = "Otro ingreso" };
-            _ = _persistent.Update(incomeType, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _ = _persistent.Update(incomeType, new() { Id = 1 });
 
             IncomeType incomeType2 = new() { Id = 2 };
-            incomeType2 = _persistent.Read(incomeType2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            incomeType2 = _persistent.Read(incomeType2);
 
             Assert.NotEqual("Credito cartera", incomeType2.Name);
         }
@@ -116,13 +115,13 @@ namespace Dal.Test.Config
         /// Prueba la eliminación de un tipo de ingreso
         /// </summary>
         [Fact]
-        public void IncomeTypeDeleteTest()
+        public void DeleteTest()
         {
             IncomeType incomeType = new() { Id = 3 };
-            _ = _persistent.Delete(incomeType, new() { Id = 1 }, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            _ = _persistent.Delete(incomeType, new() { Id = 1 });
 
             IncomeType incomeType2 = new() { Id = 3 };
-            incomeType2 = _persistent.Read(incomeType2, new MySqlConnection(_configuration.GetConnectionString("golden") ?? ""));
+            incomeType2 = _persistent.Read(incomeType2);
 
             Assert.Equal(0, incomeType2.Id);
         }
