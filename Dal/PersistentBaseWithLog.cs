@@ -39,27 +39,27 @@ namespace Dal
         {
             _connString = connString;
             persistentLogDb = new PersistentLogDb(connString);
-            SqlMapper.SetTypeMap(typeof(AccountExecutive), new CustomPropertyTypeMap(typeof(AccountExecutive), GetMapColumnsAccountExecutive()));
-            SqlMapper.SetTypeMap(typeof(Registration), new CustomPropertyTypeMap(typeof(Registration), GetMapColumnsRegistration()));
-            SqlMapper.SetTypeMap(typeof(Application), new CustomPropertyTypeMap(typeof(Application), GetMapColumnsApplication()));
-            SqlMapper.SetTypeMap(typeof(Role), new CustomPropertyTypeMap(typeof(Role), GetMapColumnsRole()));
-            SqlMapper.SetTypeMap(typeof(User), new CustomPropertyTypeMap(typeof(User), GetMapColumnsUser()));
-            SqlMapper.SetTypeMap(typeof(City), new CustomPropertyTypeMap(typeof(City), GetMapColumnsCity()));
-            SqlMapper.SetTypeMap(typeof(Country), new CustomPropertyTypeMap(typeof(Country), GetMapColumnsCountry()));
-            SqlMapper.SetTypeMap(typeof(IdentificationType), new CustomPropertyTypeMap(typeof(IdentificationType), GetMapColumnsIdentificationType()));
-            SqlMapper.SetTypeMap(typeof(IncomeType), new CustomPropertyTypeMap(typeof(IncomeType), GetMapColumnsIncomeType()));
-            SqlMapper.SetTypeMap(typeof(Office), new CustomPropertyTypeMap(typeof(Office), GetMapColumnsOffice()));
-            SqlMapper.SetTypeMap(typeof(Parameter), new CustomPropertyTypeMap(typeof(Parameter), GetMapColumnsParameter()));
-            SqlMapper.SetTypeMap(typeof(Plan), new CustomPropertyTypeMap(typeof(Plan), GetMapColumnsPlan()));
-            SqlMapper.SetTypeMap(typeof(Scale), new CustomPropertyTypeMap(typeof(Scale), GetMapColumnsScale()));
-            SqlMapper.SetTypeMap(typeof(AccountNumber), new CustomPropertyTypeMap(typeof(AccountNumber), GetMapColumnsAccountNumber()));
-            SqlMapper.SetTypeMap(typeof(AccountType), new CustomPropertyTypeMap(typeof(AccountType), GetMapColumnsAccountType()));
-            SqlMapper.SetTypeMap(typeof(ConsecutiveNumber), new CustomPropertyTypeMap(typeof(ConsecutiveNumber), GetMapColumnsConsecutiveNumber()));
-            SqlMapper.SetTypeMap(typeof(ConsecutiveType), new CustomPropertyTypeMap(typeof(ConsecutiveType), GetMapColumnsConsecutiveType()));
-            SqlMapper.SetTypeMap(typeof(Beneficiary), new CustomPropertyTypeMap(typeof(Beneficiary), GetMapColumnsBeneficiary()));
-            SqlMapper.SetTypeMap(typeof(Owner), new CustomPropertyTypeMap(typeof(Owner), GetMapColumnsOwner()));
-            SqlMapper.SetTypeMap(typeof(Notification), new CustomPropertyTypeMap(typeof(Notification), GetMapColumnsNotification()));
-            SqlMapper.SetTypeMap(typeof(Template), new CustomPropertyTypeMap(typeof(Template), GetMapColumnsTemplate()));
+            SqlMapper.SetTypeMap(typeof(AccountExecutive), new CustomPropertyTypeMap(typeof(AccountExecutive), GetProperty));
+            SqlMapper.SetTypeMap(typeof(Registration), new CustomPropertyTypeMap(typeof(Registration), GetProperty));
+            SqlMapper.SetTypeMap(typeof(Application), new CustomPropertyTypeMap(typeof(Application), GetProperty));
+            SqlMapper.SetTypeMap(typeof(Role), new CustomPropertyTypeMap(typeof(Role), GetProperty));
+            SqlMapper.SetTypeMap(typeof(User), new CustomPropertyTypeMap(typeof(User), GetProperty));
+            SqlMapper.SetTypeMap(typeof(City), new CustomPropertyTypeMap(typeof(City), GetProperty));
+            SqlMapper.SetTypeMap(typeof(Country), new CustomPropertyTypeMap(typeof(Country), GetProperty));
+            SqlMapper.SetTypeMap(typeof(IdentificationType), new CustomPropertyTypeMap(typeof(IdentificationType), GetProperty));
+            SqlMapper.SetTypeMap(typeof(IncomeType), new CustomPropertyTypeMap(typeof(IncomeType), GetProperty));
+            SqlMapper.SetTypeMap(typeof(Office), new CustomPropertyTypeMap(typeof(Office), GetProperty));
+            SqlMapper.SetTypeMap(typeof(Parameter), new CustomPropertyTypeMap(typeof(Parameter), GetProperty));
+            SqlMapper.SetTypeMap(typeof(Plan), new CustomPropertyTypeMap(typeof(Plan), GetProperty));
+            SqlMapper.SetTypeMap(typeof(Scale), new CustomPropertyTypeMap(typeof(Scale), GetProperty));
+            SqlMapper.SetTypeMap(typeof(AccountNumber), new CustomPropertyTypeMap(typeof(AccountNumber), GetProperty));
+            SqlMapper.SetTypeMap(typeof(AccountType), new CustomPropertyTypeMap(typeof(AccountType), GetProperty));
+            SqlMapper.SetTypeMap(typeof(ConsecutiveNumber), new CustomPropertyTypeMap(typeof(ConsecutiveNumber), GetProperty));
+            SqlMapper.SetTypeMap(typeof(ConsecutiveType), new CustomPropertyTypeMap(typeof(ConsecutiveType), GetProperty));
+            SqlMapper.SetTypeMap(typeof(Beneficiary), new CustomPropertyTypeMap(typeof(Beneficiary), GetProperty));
+            SqlMapper.SetTypeMap(typeof(Owner), new CustomPropertyTypeMap(typeof(Owner), GetProperty));
+            SqlMapper.SetTypeMap(typeof(Notification), new CustomPropertyTypeMap(typeof(Notification), GetProperty));
+            SqlMapper.SetTypeMap(typeof(Template), new CustomPropertyTypeMap(typeof(Template), GetProperty));
         }
         #endregion
 
@@ -136,12 +136,14 @@ namespace Dal
         public abstract T Delete(T entity, User user);
 
         /// <summary>
-        /// Retorna el mapeo de las columnas para la clase AccountExecutive
+        /// Trae la propiedad correspondiente según la clase y nombre de la columna de la base de datos
         /// </summary>
-        /// <returns>Mapeo de las columnas para la clase AccountExecutive</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsAccountExecutive()
+        /// <param name="type">Clase a mapear</param>
+        /// <param name="columnName">Nombre del campo de la base de datos</param>
+        /// <returns>Propiedad de la clase mapeada</returns>
+        private static PropertyInfo? GetProperty(Type type, string columnName)
         {
-            return (type, columnName) =>
+            if (type == typeof(AccountExecutive))
             {
                 return columnName switch
                 {
@@ -152,16 +154,8 @@ namespace Dal
                     "account_executive_identification" => type.GetProperty("Identification"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase Registration
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase Registration</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsRegistration()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Registration))
             {
                 return columnName switch
                 {
@@ -170,16 +164,8 @@ namespace Dal
                     "contract_number" => type.GetProperty("ContractNumber"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase Application
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase Application</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsApplication()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Application))
             {
                 return columnName switch
                 {
@@ -188,16 +174,8 @@ namespace Dal
                     "application" => type.GetProperty("Name"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase Role
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase Role</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsRole()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Role))
             {
                 return columnName switch
                 {
@@ -206,16 +184,8 @@ namespace Dal
                     "role" => type.GetProperty("Name"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase User
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase User</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsUser()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Role))
             {
                 return columnName switch
                 {
@@ -226,16 +196,8 @@ namespace Dal
                     "active" => type.GetProperty("Active"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase City
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase City</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsCity()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(City))
             {
                 return columnName switch
                 {
@@ -250,16 +212,8 @@ namespace Dal
                     "city" => type.GetProperty("Name"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase Country
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase Country</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsCountry()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Country))
             {
                 return columnName switch
                 {
@@ -273,16 +227,8 @@ namespace Dal
                     "name" => type.GetProperty("Name"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase IdentificationType
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase IdentificationType</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsIdentificationType()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(IdentificationType))
             {
                 return columnName switch
                 {
@@ -299,16 +245,8 @@ namespace Dal
                     "name" => type.GetProperty("Name"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase IncomeType
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase IncomeType</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsIncomeType()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(IncomeType))
             {
                 return columnName switch
                 {
@@ -317,16 +255,8 @@ namespace Dal
                     "name" => type.GetProperty("Name"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase Office
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase Office</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsOffice()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Office))
             {
                 return columnName switch
                 {
@@ -337,16 +267,8 @@ namespace Dal
                     "office_address" => type.GetProperty("Address"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase Parameter
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase Parameter</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsParameter()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Parameter))
             {
                 return columnName switch
                 {
@@ -355,16 +277,8 @@ namespace Dal
                     "value" => type.GetProperty("Value"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase Plan
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase Plan</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsPlan()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Plan))
             {
                 return columnName switch
                 {
@@ -383,16 +297,8 @@ namespace Dal
                     "plan_description" => type.GetProperty("Description"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase Scale
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase Scale</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsScale()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Scale))
             {
                 return columnName switch
                 {
@@ -405,16 +311,8 @@ namespace Dal
                     "scale_validity" => type.GetProperty("Validity"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase AccountNumber
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase AccountNumber</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsAccountNumber()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(AccountNumber))
             {
                 return columnName switch
                 {
@@ -422,16 +320,8 @@ namespace Dal
                     "number" => type.GetProperty("Number"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase AccountType
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase AccountType</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsAccountType()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(AccountType))
             {
                 return columnName switch
                 {
@@ -440,16 +330,8 @@ namespace Dal
                     "accounttype" => type.GetProperty("Name"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase ConsecutiveNumber
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase ConsecutiveNumber</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsConsecutiveNumber()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(ConsecutiveNumber))
             {
                 return columnName switch
                 {
@@ -457,16 +339,8 @@ namespace Dal
                     "number" => type.GetProperty("Number"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase ConsecutiveType
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase ConsecutiveType</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsConsecutiveType()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(ConsecutiveType))
             {
                 return columnName switch
                 {
@@ -475,16 +349,8 @@ namespace Dal
                     "consecutivetype" => type.GetProperty("Name"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase Beneficiary
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase Beneficiary</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsBeneficiary()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Beneficiary))
             {
                 return columnName switch
                 {
@@ -502,16 +368,8 @@ namespace Dal
                     "beneficiary2_relationship" => type.GetProperty("Relationship"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase Owner
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase Owner</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsOwner()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Owner))
             {
                 return columnName switch
                 {
@@ -532,16 +390,8 @@ namespace Dal
                     "owner_email" => type.GetProperty("Email"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase Notification
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase Notification</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsNotification()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Notification))
             {
                 return columnName switch
                 {
@@ -553,16 +403,8 @@ namespace Dal
                     "iduser" => type.GetProperty("User"),
                     _ => null,
                 };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase Template
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase Template</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsTemplate()
-        {
-            return (type, columnName) =>
+            }
+            if (type == typeof(Template))
             {
                 return columnName switch
                 {
@@ -571,7 +413,8 @@ namespace Dal
                     "content" => type.GetProperty("Content"),
                     _ => null,
                 };
-            };
+            }
+            return null;
         }
         #endregion
     }
