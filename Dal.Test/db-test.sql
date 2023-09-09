@@ -618,9 +618,9 @@ FROM
 	LEFT JOIN v_beneficiary b2 ON r.idbeneficiary2 = b2.idbeneficiary;
 
 /* Poblar tabla de matriculas */
-INSERT INTO registration (idoffice, date, contract_number, idowner, idbeneficiary1, idbeneficiary2, idplan) VALUES (1, NOW(), '255657', 1, 1, 2, 1);
-INSERT INTO registration (idoffice, date, contract_number, idowner, idbeneficiary1, idbeneficiary2, idplan) VALUES (1, NOW(), '256566', 1, 3, NULL, 1);
-INSERT INTO registration (idoffice, date, contract_number, idowner, idbeneficiary1, idbeneficiary2, idplan) VALUES (1, NOW(), '255658', 1, NULL, NULL, 2);
+INSERT INTO registration (idoffice, date, contract_number, idowner, idbeneficiary1, idbeneficiary2, idplan) VALUES (1, CURDATE(), '255657', 1, 1, 2, 1);
+INSERT INTO registration (idoffice, date, contract_number, idowner, idbeneficiary1, idbeneficiary2, idplan) VALUES (1, CURDATE(), '256566', 1, 3, NULL, 1);
+INSERT INTO registration (idoffice, date, contract_number, idowner, idbeneficiary1, idbeneficiary2, idplan) VALUES (1, CURDATE(), '255658', 1, NULL, NULL, 2);
 
 /* Crear tabla de escalas en matriculas */
 CREATE TABLE registration_scale (

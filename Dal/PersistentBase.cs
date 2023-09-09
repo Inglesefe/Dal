@@ -2,7 +2,6 @@
 using Dapper;
 using Entities;
 using Entities.Log;
-using System.Reflection;
 
 namespace Dal
 {
@@ -26,8 +25,8 @@ namespace Dal
         protected PersistentBase(string connString)
         {
             _connString = connString;
-            SqlMapper.SetTypeMap(typeof(LogComponent), new CustomPropertyTypeMap(typeof(LogComponent), GetMapColumnsLogComponent()));
-            SqlMapper.SetTypeMap(typeof(LogDb), new CustomPropertyTypeMap(typeof(LogDb), GetMapColumnsLogDb()));
+            SqlMapper.SetTypeMap(typeof(LogComponent), new CustomPropertyTypeMap(typeof(LogComponent), (type, columnName) => new LogComponent().GetMapping(columnName)));
+            SqlMapper.SetTypeMap(typeof(LogDb), new CustomPropertyTypeMap(typeof(LogDb), (type, columnName) => new LogDb().GetMapping(columnName)));
         }
         #endregion
 
@@ -46,52 +45,6 @@ namespace Dal
 
         /// <inheritdoc />
         public abstract T Delete(T entity);
-
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase LogComponent
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase LogComponent</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsLogComponent()
-        {
-            return (type, columnName) =>
-            {
-                return columnName switch
-                {
-                    "idlog" => type.GetProperty("Id"),
-                    "date" => type.GetProperty("Date"),
-                    "type" => type.GetProperty("Type"),
-                    "controller" => type.GetProperty("Controller"),
-                    "method" => type.GetProperty("Method"),
-                    "input" => type.GetProperty("Input"),
-                    "output" => type.GetProperty("Output"),
-                    "iduser" => type.GetProperty("User"),
-                    _ => null,
-                };
-            };
-        }
-
-        /// <summary>
-        /// Retorna el mapeo de las columnas para la clase LogDb
-        /// </summary>
-        /// <returns>Mapeo de las columnas para la clase LogDb</returns>
-        private static Func<Type, string, PropertyInfo> GetMapColumnsLogDb()
-        {
-            return (type, columnName) =>
-            {
-                return columnName switch
-                {
-                    "idlog" => type.GetProperty("Id"),
-                    "date" => type.GetProperty("Date"),
-                    "action" => type.GetProperty("Action"),
-                    "idtable" => type.GetProperty("IdTable"),
-                    "table" => type.GetProperty("Table"),
-                    "sql" => type.GetProperty("Sql"),
-                    "iduser" => type.GetProperty("User"),
-                    _ => null,
-                };
-            };
-        }
         #endregion
     }
 }
