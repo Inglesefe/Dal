@@ -48,45 +48,8 @@ namespace Dal.Admon
                 using IDbConnection connection = new MySqlConnection(_connString);
                 List<Registration> executives = connection.Query(
                     queryBuilder.GetSelectForList(filters, orders, limit, offset),
-                    new[]
-                    {
-                    typeof(Registration),
-                    typeof(Office),
-                    typeof(City),
-                    typeof(Country),
-                    typeof(Owner),
-                    typeof(IdentificationType),
-                    typeof(Beneficiary),
-                    typeof(IdentificationType),
-                    typeof(Beneficiary),
-                    typeof(IdentificationType),
-                    typeof(Plan)
-                    },
-                    objects =>
-                    {
-                        Registration r = (objects[0] as Registration) ?? new Registration();
-                        Office o = (objects[1] as Office) ?? new Office();
-                        City ci = (objects[2] as City) ?? new City();
-                        Country co = (objects[3] as Country) ?? new Country();
-                        Owner ow = (objects[4] as Owner) ?? new Owner();
-                        IdentificationType it = (objects[5] as IdentificationType) ?? new IdentificationType();
-                        Beneficiary b1 = (objects[6] as Beneficiary) ?? new Beneficiary();
-                        IdentificationType itb1 = (objects[7] as IdentificationType) ?? new IdentificationType();
-                        Beneficiary b2 = (objects[8] as Beneficiary) ?? new Beneficiary();
-                        IdentificationType itb2 = (objects[9] as IdentificationType) ?? new IdentificationType();
-                        Plan p = (objects[10] as Plan) ?? new Plan();
-                        ci.Country = co;
-                        o.City = ci;
-                        r.Office = o;
-                        ow.IdentificationType = it;
-                        b1.IdentificationType = itb1;
-                        r.Beneficiary1 = b1;
-                        b2.IdentificationType = itb2;
-                        r.Beneficiary2 = b2;
-                        r.Owner = ow;
-                        r.Plan = p;
-                        return r;
-                    },
+                    GetTypes(),
+                    Map(),
                     splitOn: "idoffice, office_idcity, office_idcountry, " +
                     "idowner, owner_ididentificationtype, idbeneficiary1, " +
                     "beneficiary1_ididentificationtype, idbeneficiary2, beneficiary2_ididentificationtype, " +
@@ -121,45 +84,8 @@ namespace Dal.Admon
                     "beneficiary2_relationship, beneficiary2_ididentificationtype, beneficiary2_identificationtype, idplan, plan_value, plan_initial_fee, plan_installments_number, " +
                     "plan_installment_value, plan_active, plan_description " +
                     "FROM v_registration WHERE idregistration = @Id",
-                    new[]
-                    {
-                    typeof(Registration),
-                    typeof(Office),
-                    typeof(City),
-                    typeof(Country),
-                    typeof(Owner),
-                    typeof(IdentificationType),
-                    typeof(Beneficiary),
-                    typeof(IdentificationType),
-                    typeof(Beneficiary),
-                    typeof(IdentificationType),
-                    typeof(Plan)
-                    },
-                    objects =>
-                    {
-                        Registration r = (objects[0] as Registration) ?? new Registration();
-                        Office o = (objects[1] as Office) ?? new Office();
-                        City ci = (objects[2] as City) ?? new City();
-                        Country co = (objects[3] as Country) ?? new Country();
-                        Owner ow = (objects[4] as Owner) ?? new Owner();
-                        IdentificationType it = (objects[5] as IdentificationType) ?? new IdentificationType();
-                        Beneficiary b1 = (objects[6] as Beneficiary) ?? new Beneficiary();
-                        IdentificationType itb1 = (objects[7] as IdentificationType) ?? new IdentificationType();
-                        Beneficiary b2 = (objects[8] as Beneficiary) ?? new Beneficiary();
-                        IdentificationType itb2 = (objects[9] as IdentificationType) ?? new IdentificationType();
-                        Plan p = (objects[10] as Plan) ?? new Plan();
-                        ci.Country = co;
-                        o.City = ci;
-                        r.Office = o;
-                        ow.IdentificationType = it;
-                        b1.IdentificationType = itb1;
-                        r.Beneficiary1 = b1;
-                        b2.IdentificationType = itb2;
-                        r.Beneficiary2 = b2;
-                        r.Owner = ow;
-                        r.Plan = p;
-                        return r;
-                    },
+                    GetTypes(),
+                    Map(),
                     entity,
                     splitOn: "idoffice, office_idcity, office_idcountry, " +
                     "idowner, owner_ididentificationtype, idbeneficiary1, " +
@@ -288,6 +214,60 @@ namespace Dal.Admon
             {
                 throw new PersistentException("Error al eliminar la matrícula", ex);
             }
+        }
+
+        /// <summary>
+        /// Trae los tipos de datos a mapear
+        /// </summary>
+        /// <returns>Tipos de datos a mapear</returns>
+        private static Type[] GetTypes()
+        {
+            return new[] {
+                typeof(Registration),
+                typeof(Office),
+                typeof(City),
+                typeof(Country),
+                typeof(Owner),
+                typeof(IdentificationType),
+                typeof(Beneficiary),
+                typeof(IdentificationType),
+                typeof(Beneficiary),
+                typeof(IdentificationType),
+                typeof(Plan)
+            };
+        }
+
+        /// <summary>
+        /// Realiza el mapeo
+        /// </summary>
+        /// <returns>Función de mapeo</returns>
+        private static Func<object[], Registration> Map()
+        {
+            return objects =>
+            {
+                Registration r = (objects[0] as Registration) ?? new Registration();
+                Office o = (objects[1] as Office) ?? new Office();
+                City ci = (objects[2] as City) ?? new City();
+                Country co = (objects[3] as Country) ?? new Country();
+                Owner ow = (objects[4] as Owner) ?? new Owner();
+                IdentificationType it = (objects[5] as IdentificationType) ?? new IdentificationType();
+                Beneficiary b1 = (objects[6] as Beneficiary) ?? new Beneficiary();
+                IdentificationType itb1 = (objects[7] as IdentificationType) ?? new IdentificationType();
+                Beneficiary b2 = (objects[8] as Beneficiary) ?? new Beneficiary();
+                IdentificationType itb2 = (objects[9] as IdentificationType) ?? new IdentificationType();
+                Plan p = (objects[10] as Plan) ?? new Plan();
+                ci.Country = co;
+                o.City = ci;
+                r.Office = o;
+                ow.IdentificationType = it;
+                b1.IdentificationType = itb1;
+                r.Beneficiary1 = b1;
+                b2.IdentificationType = itb2;
+                r.Beneficiary2 = b2;
+                r.Owner = ow;
+                r.Plan = p;
+                return r;
+            };
         }
         #endregion
     }

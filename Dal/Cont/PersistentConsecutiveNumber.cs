@@ -41,24 +41,8 @@ namespace Dal.Admon
                 using IDbConnection connection = new MySqlConnection(_connString);
                 List<ConsecutiveNumber> numbers = connection.Query(
                     queryBuilder.GetSelectForList(filters, orders, limit, offset),
-                    new[]
-                    {
-                    typeof(ConsecutiveNumber),
-                    typeof(ConsecutiveType),
-                    typeof(City),
-                    typeof(Country)
-                    },
-                    objects =>
-                    {
-                        ConsecutiveNumber cn = (objects[0] as ConsecutiveNumber) ?? new ConsecutiveNumber();
-                        ConsecutiveType ct = (objects[1] as ConsecutiveType) ?? new ConsecutiveType();
-                        City c = (objects[2] as City) ?? new City();
-                        Country co = (objects[3] as Country) ?? new Country();
-                        c.Country = co;
-                        cn.ConsecutiveType = ct;
-                        cn.City = c;
-                        return cn;
-                    },
+                    GetTypes(),
+                    Map(),
                     splitOn: "idconsecutivetype, idcity, idcountry"
                 ).ToList();
                 int total = connection.ExecuteScalar<int>(queryBuilder.GetCountTotalSelectForList(filters, orders));
@@ -84,24 +68,8 @@ namespace Dal.Admon
                 IEnumerable<ConsecutiveNumber> result = connection.Query(
                     "SELECT idconsecutivenumber, number, idconsecutivetype, consecutivetype, idcity, city_code, city_name, idcountry, country_code, country_name " +
                     "FROM v_consecutive_number WHERE idconsecutivenumber = @Id",
-                    new[]
-                    {
-                    typeof(ConsecutiveNumber),
-                    typeof(ConsecutiveType),
-                    typeof(City),
-                    typeof(Country)
-                    },
-                    objects =>
-                    {
-                        ConsecutiveNumber cn = (objects[0] as ConsecutiveNumber) ?? new ConsecutiveNumber();
-                        ConsecutiveType ct = (objects[1] as ConsecutiveType) ?? new ConsecutiveType();
-                        City c = (objects[2] as City) ?? new City();
-                        Country co = (objects[3] as Country) ?? new Country();
-                        c.Country = co;
-                        cn.ConsecutiveType = ct;
-                        cn.City = c;
-                        return cn;
-                    },
+                    GetTypes(),
+                    Map(),
                     entity,
                     splitOn: "idconsecutivetype, idcity, idcountry"
                 );
@@ -195,6 +163,39 @@ namespace Dal.Admon
                 throw new PersistentException("Error al eliminar el número de consecutivo", ex);
             }
             return entity;
+        }
+
+        /// <summary>
+        /// Trae los tipos de datos a mapear
+        /// </summary>
+        /// <returns>Tipos de datos a mapear</returns>
+        private static Type[] GetTypes()
+        {
+            return new[] {
+                typeof(ConsecutiveNumber),
+                typeof(ConsecutiveType),
+                typeof(City),
+                typeof(Country)
+            };
+        }
+
+        /// <summary>
+        /// Realiza el mapeo
+        /// </summary>
+        /// <returns>Función de mapeo</returns>
+        private static Func<object[], ConsecutiveNumber> Map()
+        {
+            return objects =>
+            {
+                ConsecutiveNumber cn = (objects[0] as ConsecutiveNumber) ?? new ConsecutiveNumber();
+                ConsecutiveType ct = (objects[1] as ConsecutiveType) ?? new ConsecutiveType();
+                City c = (objects[2] as City) ?? new City();
+                Country co = (objects[3] as Country) ?? new Country();
+                c.Country = co;
+                cn.ConsecutiveType = ct;
+                cn.City = c;
+                return cn;
+            };
         }
         #endregion
     }

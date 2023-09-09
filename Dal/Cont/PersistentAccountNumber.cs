@@ -41,24 +41,8 @@ namespace Dal.Admon
                 using IDbConnection connection = new MySqlConnection(_connString);
                 List<AccountNumber> numbers = connection.Query(
                     queryBuilder.GetSelectForList(filters, orders, limit, offset),
-                    new[]
-                    {
-                    typeof(AccountNumber),
-                    typeof(AccountType),
-                    typeof(City),
-                    typeof(Country)
-                    },
-                    objects =>
-                    {
-                        AccountNumber an = (objects[0] as AccountNumber) ?? new AccountNumber();
-                        AccountType at = (objects[1] as AccountType) ?? new AccountType();
-                        City c = (objects[2] as City) ?? new City();
-                        Country co = (objects[3] as Country) ?? new Country();
-                        c.Country = co;
-                        an.AccountType = at;
-                        an.City = c;
-                        return an;
-                    },
+                    GetTypes(),
+                    Map(),
                     splitOn: "idaccounttype, idcity, idcountry"
                 ).ToList();
                 int total = connection.ExecuteScalar<int>(queryBuilder.GetCountTotalSelectForList(filters, orders));
@@ -84,24 +68,8 @@ namespace Dal.Admon
                 IEnumerable<AccountNumber> result = connection.Query(
                     "SELECT idaccountnumber, number, idaccounttype, accounttype, idcity, city_code, city_name, idcountry, country_code, country_name " +
                     "FROM v_account_number WHERE idaccountnumber = @Id",
-                    new[]
-                    {
-                    typeof(AccountNumber),
-                    typeof(AccountType),
-                    typeof(City),
-                    typeof(Country)
-                    },
-                    objects =>
-                    {
-                        AccountNumber an = (objects[0] as AccountNumber) ?? new AccountNumber();
-                        AccountType at = (objects[1] as AccountType) ?? new AccountType();
-                        City c = (objects[2] as City) ?? new City();
-                        Country co = (objects[3] as Country) ?? new Country();
-                        c.Country = co;
-                        an.AccountType = at;
-                        an.City = c;
-                        return an;
-                    },
+                    GetTypes(),
+                    Map(),
                     entity,
                     splitOn: "idaccounttype, idcity, idcountry"
                 );
@@ -195,6 +163,39 @@ namespace Dal.Admon
                 throw new PersistentException("Error al eliminar el número de cuenta", ex);
             }
             return entity;
+        }
+
+        /// <summary>
+        /// Trae los tipos de datos a mapear
+        /// </summary>
+        /// <returns>Tipos de datos a mapear</returns>
+        private static Type[] GetTypes()
+        {
+            return new[] {
+                typeof(AccountNumber),
+                typeof(AccountType),
+                typeof(City),
+                typeof(Country)
+            };
+        }
+
+        /// <summary>
+        /// Realiza el mapeo
+        /// </summary>
+        /// <returns>Función de mapeo</returns>
+        private static Func<object[], AccountNumber> Map()
+        {
+            return objects =>
+            {
+                AccountNumber an = (objects[0] as AccountNumber) ?? new AccountNumber();
+                AccountType at = (objects[1] as AccountType) ?? new AccountType();
+                City c = (objects[2] as City) ?? new City();
+                Country co = (objects[3] as Country) ?? new Country();
+                c.Country = co;
+                an.AccountType = at;
+                an.City = c;
+                return an;
+            };
         }
         #endregion
     }

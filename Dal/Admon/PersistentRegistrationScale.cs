@@ -43,27 +43,8 @@ namespace Dal.Admon
                 using IDbConnection connection = new MySqlConnection(_connString);
                 List<RegistrationScale> executives = connection.Query(
                     queryBuilder.GetSelectForList(filters, orders, limit, offset),
-                    new[]
-                    {
-                    typeof(RegistrationScale),
-                    typeof(Registration),
-                    typeof(Scale),
-                    typeof(AccountExecutive),
-                    typeof(IdentificationType)
-                    },
-                    objects =>
-                    {
-                        RegistrationScale rs = (objects[0] as RegistrationScale) ?? new RegistrationScale();
-                        Registration r = (objects[1] as Registration) ?? new Registration();
-                        Scale s = (objects[2] as Scale) ?? new Scale();
-                        AccountExecutive ae = (objects[3] as AccountExecutive) ?? new AccountExecutive();
-                        IdentificationType it = (objects[4] as IdentificationType) ?? new IdentificationType();
-                        ae.IdentificationType = it;
-                        rs.Registration = r;
-                        rs.Scale = s;
-                        rs.AccountExecutive = ae;
-                        return rs;
-                    },
+                    GetTypes(),
+                    Map(),
                     splitOn: "idregistration, idscale, idaccountexecutive, account_executive_ididentificationtype"
                 ).ToList();
                 int total = connection.ExecuteScalar<int>(queryBuilder.GetCountTotalSelectForList(filters, orders));
@@ -91,27 +72,8 @@ namespace Dal.Admon
                     "idregistrationscale, idregistration, idscale, scale, scale_comission, scale_validity, " +
                     "idaccountexecutive, account_executive_identification, account_executive_ididentificationtype, account_executive_identificationtype " +
                     "FROM v_registration_scale WHERE idregistrationscale = @Id",
-                    new[]
-                    {
-                    typeof(RegistrationScale),
-                    typeof(Registration),
-                    typeof(Scale),
-                    typeof(AccountExecutive),
-                    typeof(IdentificationType)
-                    },
-                    objects =>
-                    {
-                        RegistrationScale rs = (objects[0] as RegistrationScale) ?? new RegistrationScale();
-                        Registration r = (objects[1] as Registration) ?? new Registration();
-                        Scale s = (objects[2] as Scale) ?? new Scale();
-                        AccountExecutive ae = (objects[3] as AccountExecutive) ?? new AccountExecutive();
-                        IdentificationType it = (objects[4] as IdentificationType) ?? new IdentificationType();
-                        ae.IdentificationType = it;
-                        rs.Registration = r;
-                        rs.Scale = s;
-                        rs.AccountExecutive = ae;
-                        return rs;
-                    },
+                    GetTypes(),
+                    Map(),
                     entity,
                     splitOn: "idregistration, idscale, idaccountexecutive, account_executive_ididentificationtype"
                 );
@@ -221,6 +183,42 @@ namespace Dal.Admon
             {
                 throw new PersistentException("Error al eliminar la relación entre matrícula, escala y ejecutivo de cuenta", ex);
             }
+        }
+
+        /// <summary>
+        /// Trae los tipos de datos a mapear
+        /// </summary>
+        /// <returns>Tipos de datos a mapear</returns>
+        private static Type[] GetTypes()
+        {
+            return new[] {
+                typeof(RegistrationScale),
+                typeof(Registration),
+                typeof(Scale),
+                typeof(AccountExecutive),
+                typeof(IdentificationType)
+            };
+        }
+
+        /// <summary>
+        /// Realiza el mapeo
+        /// </summary>
+        /// <returns>Función de mapeo</returns>
+        private static Func<object[], RegistrationScale> Map()
+        {
+            return objects =>
+            {
+                RegistrationScale rs = (objects[0] as RegistrationScale) ?? new RegistrationScale();
+                Registration r = (objects[1] as Registration) ?? new Registration();
+                Scale s = (objects[2] as Scale) ?? new Scale();
+                AccountExecutive ae = (objects[3] as AccountExecutive) ?? new AccountExecutive();
+                IdentificationType it = (objects[4] as IdentificationType) ?? new IdentificationType();
+                ae.IdentificationType = it;
+                rs.Registration = r;
+                rs.Scale = s;
+                rs.AccountExecutive = ae;
+                return rs;
+            };
         }
         #endregion
     }

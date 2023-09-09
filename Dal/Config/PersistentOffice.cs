@@ -17,7 +17,7 @@ namespace Dal.Config
     {
         #region Constructors
         /// <summary>
-        /// Inicializa la conexión a la bse de datos
+        /// Inicializa la conexión a la base de datos
         /// <param name="connString">Cadena de conexión a la base de datos</param>
         /// </summary>
         public PersistentOffice(string connString) : base(connString) { }
