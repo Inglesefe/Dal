@@ -3,11 +3,11 @@ using Dal.Exceptions;
 using Dal.Utils;
 using Dapper;
 using Entities.Auth;
-using Entities.Config;
+using Entities.Cont;
 using MySql.Data.MySqlClient;
 using System.Data;
 
-namespace Dal.Admon
+namespace Dal.Cont
 {
     /// <summary>
     /// Realiza la persistencia de los tipos de cuenta contable en la base de datos
