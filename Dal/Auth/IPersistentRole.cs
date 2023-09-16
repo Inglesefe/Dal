@@ -9,6 +9,7 @@ namespace Dal.Auth
     /// </summary>
     public interface IPersistentRole : IPersistentWithLog<Role>
     {
+        #region Methods
         /// <summary>
         /// Trae un listado de usuarios asignados a un rol desde la base de datos
         /// </summary>
@@ -96,5 +97,6 @@ namespace Dal.Auth
         /// <returns>Aplicación eliminada</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar la aplicación del rol</exception>
         Application DeleteApplication(Application application, Role role, User user);
+        #endregion
     }
 }

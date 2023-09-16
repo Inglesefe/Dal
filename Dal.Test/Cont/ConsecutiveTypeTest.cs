@@ -1,7 +1,7 @@
-using Dal.Admon;
+using Dal.Cont;
 using Dal.Dto;
 using Dal.Exceptions;
-using Entities.Config;
+using Entities.Cont;
 using Microsoft.Extensions.Configuration;
 
 namespace Dal.Test.Cont

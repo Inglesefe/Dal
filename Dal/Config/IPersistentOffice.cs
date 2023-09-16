@@ -7,10 +7,11 @@ using Entities.Config;
 namespace Dal.Config
 {
     /// <summary>
-    /// Métodos propios de la persistencia de aplicaciones
+    /// Métodos propios de la persistencia de oficinas
     /// </summary>
     public interface IPersistentOffice : IPersistentWithLog<Office>
     {
+        #region Methods
         /// <summary>
         /// Trae un listado de ejecutivos de cuenta asignados a una oficina desde la base de datos
         /// </summary>
@@ -54,5 +55,6 @@ namespace Dal.Config
         /// <returns>Ejecutivo de cuenta eliminado</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar el ejecutivo de cuenta de la oficina</exception>
         AccountExecutive DeleteAccountExecutive(AccountExecutive executive, Office office, User user);
+        #endregion
     }
 }
