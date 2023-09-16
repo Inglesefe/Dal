@@ -9,6 +9,7 @@ namespace Dal.Auth
     /// </summary>
     public interface IPersistentUser : IPersistentWithLog<User>
     {
+        #region Methods
         /// <summary>
         /// Consulta un usuario dado su login y contraseña
         /// </summary>
@@ -79,5 +80,6 @@ namespace Dal.Auth
         /// <returns>Rol eliminado</returns>
         /// <exception cref="PersistentException">Si hubo una excepción al eliminar el rol del usuario</exception>
         Role DeleteRole(Role role, User user, User user1);
+        #endregion
     }
 }

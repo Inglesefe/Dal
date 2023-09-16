@@ -1,6 +1,7 @@
 ﻿using Entities.Admon;
 using Entities.Auth;
 using Entities.Config;
+using Entities.Cont;
 using Entities.Crm;
 using Entities.Log;
 using Entities.Noti;
