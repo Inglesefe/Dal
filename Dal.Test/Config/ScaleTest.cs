@@ -90,7 +90,7 @@ namespace Dal.Test.Config
         [Fact]
         public void InsertTest()
         {
-            Scale scale = new() { Name = "Comision 4", Comission = 4000, Validity = DateTime.Now };
+            Scale scale = new() { Code = "C4", Name = "Comision 4", Comission = 4000, Order = 4 };
             scale = _persistent.Insert(scale, new() { Id = 1 });
 
             Assert.NotEqual(0, scale.Id);
@@ -102,7 +102,7 @@ namespace Dal.Test.Config
         [Fact]
         public void UpdateTest()
         {
-            Scale scale = new() { Id = 2, Name = "Comision 5", Comission = 5000, Validity = DateTime.Now };
+            Scale scale = new() { Id = 2, Code = "C5", Name = "Comision 5", Comission = 5000, Order = 5 };
             _ = _persistent.Update(scale, new() { Id = 1 });
 
             Scale scale2 = new() { Id = 2 };
