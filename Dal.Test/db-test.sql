@@ -558,16 +558,17 @@ INSERT INTO executive_office (idoffice, idaccountexecutive) VALUES (2, 1);
 /* Crear tabla de escalas */
 CREATE TABLE scale (
   idscale int NOT NULL AUTO_INCREMENT,
+  code varchar(5) NOT NULL,
   name varchar(45) NOT NULL,
   comission int NOT NULL,
-  validity date NOT NULL,
+  `order` smallint NOT NULL,
   PRIMARY KEY (idscale)
 );
 
 /* Poblar tabla de escalas */
-INSERT INTO scale (name, comission, validity) VALUES ('Comision 1', 1000, '2023-01-01');
-INSERT INTO scale (name, comission, validity) VALUES ('Comision 2', 2000, '2023-02-01');
-INSERT INTO scale (name, comission, validity) VALUES ('Comision 3', 3000, '2023-03-01');
+INSERT INTO scale (code, name, comission, `order`) VALUES ('C1', 'Comision 1', 1000, 1);
+INSERT INTO scale (code, name, comission, `order`) VALUES ('C2', 'Comision 2', 2000, 2);
+INSERT INTO scale (code, name, comission, `order`) VALUES ('C3', 'Comision 3', 3000, 3);
 
 /* Crear tabla de matriculas */
 CREATE TABLE registration (
@@ -643,9 +644,10 @@ SELECT
 	rs.idregistrationscale,
     rs.idregistration,
     s.idscale,
+    s.code as scale_code,
     s.name as scale,
     s.comission as scale_comission,
-    s.validity as scale_validity,
+    s.`order` as scale_order,
     ae.idaccountexecutive,
     ae.name as accountexecutive,
     ae.identification as account_executive_identification,
