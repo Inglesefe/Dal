@@ -277,12 +277,14 @@ namespace Dal
             return columnName switch
             {
                 "idscale" => type.GetProperty("Id"),
+                "code" => type.GetProperty("Code"),
+                "scale_code" => type.GetProperty("Code"),
                 "name" => type.GetProperty("Name"),
                 "scale" => type.GetProperty("Name"),
                 "comission" => type.GetProperty("Comission"),
                 "scale_comission" => type.GetProperty("Comission"),
-                "validity" => type.GetProperty("Validity"),
-                "scale_validity" => type.GetProperty("Validity"),
+                "order" => type.GetProperty("Order"),
+                "scale_order" => type.GetProperty("Order"),
                 _ => null,
             };
         }

@@ -36,7 +36,7 @@ namespace Dal.Config
         {
             try
             {
-                QueryBuilder queryBuilder = new("idscale, name, comission, validity", "scale");
+                QueryBuilder queryBuilder = new("idscale, code, name, comission, `order`", "scale");
                 using IDbConnection connection = new MySqlConnection(_connString);
                 List<Scale> scales = connection.Query<Scale>(queryBuilder.GetSelectForList(filters, orders, limit, offset)).ToList();
                 int total = connection.ExecuteScalar<int>(queryBuilder.GetCountTotalSelectForList(filters, orders));
@@ -59,7 +59,7 @@ namespace Dal.Config
             try
             {
                 using IDbConnection connection = new MySqlConnection(_connString);
-                Scale result = connection.QuerySingleOrDefault<Scale>("SELECT idscale, name, comission, validity FROM scale WHERE idscale = @Id", entity);
+                Scale result = connection.QuerySingleOrDefault<Scale>("SELECT idscale, code, name, comission, `order` FROM scale WHERE idscale = @Id", entity);
                 if (result == null)
                 {
                     entity = new();
@@ -89,11 +89,11 @@ namespace Dal.Config
             {
                 using IDbConnection connection = new MySqlConnection(_connString);
                 entity.Id = connection.QuerySingle<int>(
-                    "INSERT INTO scale (name, comission, validity) VALUES (@Name, @Comission, @Validity); SELECT LAST_INSERT_ID();", entity);
+                    "INSERT INTO scale (code, name, comission, `order`) VALUES (@Code, @Name, @Comission, @Order); SELECT LAST_INSERT_ID();", entity);
                 LogInsert(
                     entity.Id,
                     "plan",
-                    "INSERT INTO scale (name, comission, validity) VALUES ('" + entity.Name + "', " + entity.Comission + ", '" + entity.Validity + "')",
+                    "INSERT INTO scale (code, name, comission, `order`) VALUES ('" + entity.Code + "', '" + entity.Name + "', " + entity.Comission + ", " + entity.Order + ")",
                     user.Id);
                 return entity;
             }
@@ -115,9 +115,9 @@ namespace Dal.Config
             try
             {
                 using IDbConnection connection = new MySqlConnection(_connString);
-                _ = connection.Execute("UPDATE scale SET name = @Name, comission = @Comission, validity = @Validity WHERE idscale = @Id", entity);
+                _ = connection.Execute("UPDATE scale SET code = @Code, name = @Name, comission = @Comission, `order` = @Order WHERE idscale = @Id", entity);
                 LogUpdate(entity.Id, "scale",
-                    "UPDATE scale SET name = '" + entity.Name + "', comission = " + entity.Comission + ", validity = '" + entity.Validity + "' WHERE idscale = " + entity.Id,
+                    "UPDATE scale SET code = '" + entity.Code + "', name = '" + entity.Name + "', comission = " + entity.Comission + ", `order` = " + entity.Order + " WHERE idscale = " + entity.Id,
                     user.Id);
                 return entity;
             }

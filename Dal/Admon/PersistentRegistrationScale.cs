@@ -37,7 +37,7 @@ namespace Dal.Admon
             try
             {
                 QueryBuilder queryBuilder = new(
-                    "idregistrationscale, idregistration, idscale, scale, scale_comission, scale_validity, " +
+                    "idregistrationscale, idregistration, idscale, scale_code, scale, scale_comission, scale_order, " +
                     "idaccountexecutive, account_executive_identification, account_executive_ididentificationtype, account_executive_identificationtype",
                     "v_registration_scale");
                 using IDbConnection connection = new MySqlConnection(_connString);
@@ -69,7 +69,7 @@ namespace Dal.Admon
                 using IDbConnection connection = new MySqlConnection(_connString);
                 IEnumerable<RegistrationScale> result = connection.Query(
                     "SELECT " +
-                    "idregistrationscale, idregistration, idscale, scale, scale_comission, scale_validity, " +
+                    "idregistrationscale, idregistration, idscale, scale_code, scale, scale_comission, scale_order, " +
                     "idaccountexecutive, account_executive_identification, account_executive_ididentificationtype, account_executive_identificationtype " +
                     "FROM v_registration_scale WHERE idregistrationscale = @Id",
                     GetTypes(),
