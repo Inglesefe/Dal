@@ -30,6 +30,7 @@ namespace Dal.Test.Noti
         /// </summary>
         public NotificationTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -43,10 +44,12 @@ namespace Dal.Test.Noti
         /// Prueba la consulta de un listado de notificaciones con filtros, ordenamientos y límite
         /// </summary>
         [Fact]
-        public void NotificationListTest()
+        public void ListTest()
         {
+            //Act
             ListResult<Notification> list = _persistent.List("idnotification = 1", "idnotification", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -55,8 +58,9 @@ namespace Dal.Test.Noti
         /// Prueba la consulta de un listado de notificaciones con filtros, ordenamientos y límite y con errores
         /// </summary>
         [Fact]
-        public void NotificationListWithErrorTest()
+        public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idnotificacion = 1", "name", 1, 0));
         }
 
@@ -64,11 +68,15 @@ namespace Dal.Test.Noti
         /// Prueba la consulta de una notificación dado su identificador
         /// </summary>
         [Fact]
-        public void NotificationReadTest()
+        public void ReadTest()
         {
+            //Arrange
             Notification notification = new() { Id = 1 };
+
+            //Act
             notification = _persistent.Read(notification);
 
+            //Assert
             Assert.Equal("leandrobaena@gmail.com", notification.To);
         }
 
@@ -76,24 +84,52 @@ namespace Dal.Test.Noti
         /// Prueba la consulta de una notificación que no existe dado su identificador
         /// </summary>
         [Fact]
-        public void NotificationReadNotFoundTest()
+        public void ReadNotFoundTest()
         {
+            //Arrange
             Notification notification = new() { Id = 10 };
+
+            //Act
             notification = _persistent.Read(notification);
 
+            //Assert
             Assert.Equal(0, notification.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de una notificación con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
         }
 
         /// <summary>
         /// Prueba la inserción de una notificación
         /// </summary>
         [Fact]
-        public void NotificationInsertTest()
+        public void InsertTest()
         {
+            //Arrange
             Notification notification = new() { To = "leandrobaena@gmail.com", Subject = "Prueba de una notificación", Content = "<p>Prueba de notificación</p>", User = 1 };
+
+            //Act
             notification = _persistent.Insert(notification, new() { Id = 1 });
 
+            //Assert
             Assert.NotEqual(0, notification.Id);
+        }
+
+        /// <summary>
+        /// Prueba la inserción de una notificación con error
+        /// </summary>
+        [Fact]
+        public void InsertWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Insert(null, new() { Id = 1 }));
         }
         #endregion
     }

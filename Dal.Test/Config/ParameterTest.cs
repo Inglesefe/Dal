@@ -30,6 +30,7 @@ namespace Dal.Test.Config
         /// </summary>
         public ParameterTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -45,8 +46,10 @@ namespace Dal.Test.Config
         [Fact]
         public void ListTest()
         {
+            //Act
             ListResult<Parameter> list = _persistent.List("idparameter = 1", "name", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -57,6 +60,7 @@ namespace Dal.Test.Config
         [Fact]
         public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idparametro = 1", "name", 1, 0));
         }
 
@@ -66,9 +70,13 @@ namespace Dal.Test.Config
         [Fact]
         public void ReadTest()
         {
+            //Arrange
             Parameter parameter = new() { Id = 1 };
+
+            //Act
             parameter = _persistent.Read(parameter);
 
+            //Assert
             Assert.Equal("Parametro 1", parameter.Name);
         }
 
@@ -78,10 +86,24 @@ namespace Dal.Test.Config
         [Fact]
         public void ReadNotFoundTest()
         {
+            //Arrange
             Parameter parameter = new() { Id = 10 };
+
+            //Act
             parameter = _persistent.Read(parameter);
 
+            //Assert
             Assert.Equal(0, parameter.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de un parámetro con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
         }
 
         /// <summary>
@@ -90,9 +112,13 @@ namespace Dal.Test.Config
         [Fact]
         public void InsertTest()
         {
+            //Arrange
             Parameter parameter = new() { Name = "Parametro 4", Value = "Valor 4" };
+
+            //Act
             parameter = _persistent.Insert(parameter, new() { Id = 1 });
 
+            //Assert
             Assert.NotEqual(0, parameter.Id);
         }
 
@@ -102,8 +128,10 @@ namespace Dal.Test.Config
         [Fact]
         public void InsertDuplicateTest()
         {
+            //Arrange
             Parameter parameter = new() { Name = "Parametro 1", Value = "Valor 5" };
 
+            //Act, Assert
             _ = Assert.Throws<PersistentException>(() => _persistent.Insert(parameter, new() { Id = 1 }));
         }
 
@@ -113,13 +141,26 @@ namespace Dal.Test.Config
         [Fact]
         public void UpdateTest()
         {
+            //Arrange
             Parameter parameter = new() { Id = 2, Name = "Parametro 6", Value = "Valor 6" };
-            _ = _persistent.Update(parameter, new() { Id = 1 });
-
             Parameter parameter2 = new() { Id = 2 };
+
+            //Act
+            _ = _persistent.Update(parameter, new() { Id = 1 });
             parameter2 = _persistent.Read(parameter2);
 
+            //Assert
             Assert.NotEqual("Parametro 2", parameter2.Name);
+        }
+
+        /// <summary>
+        /// Prueba la actualización de un parámetro con error
+        /// </summary>
+        [Fact]
+        public void UpdateWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -128,13 +169,26 @@ namespace Dal.Test.Config
         [Fact]
         public void DeleteTest()
         {
+            //Arrange
             Parameter parameter = new() { Id = 3 };
-            _ = _persistent.Delete(parameter, new() { Id = 1 });
-
             Parameter parameter2 = new() { Id = 3 };
+
+            //Act
+            _ = _persistent.Delete(parameter, new() { Id = 1 });
             parameter2 = _persistent.Read(parameter2);
 
+            //Assert
             Assert.Equal(0, parameter2.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de un parámetro con error
+        /// </summary>
+        [Fact]
+        public void DeleteWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 1 }));
         }
         #endregion
     }

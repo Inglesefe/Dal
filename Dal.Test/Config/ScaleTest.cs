@@ -30,6 +30,7 @@ namespace Dal.Test.Config
         /// </summary>
         public ScaleTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -45,8 +46,10 @@ namespace Dal.Test.Config
         [Fact]
         public void ListTest()
         {
+            //Act
             ListResult<Scale> list = _persistent.List("idscale = 1", "name", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -57,6 +60,7 @@ namespace Dal.Test.Config
         [Fact]
         public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idescala = 1", "name", 1, 0));
         }
 
@@ -66,9 +70,13 @@ namespace Dal.Test.Config
         [Fact]
         public void ReadTest()
         {
+            //Arrange
             Scale scale = new() { Id = 1 };
+
+            //Act
             scale = _persistent.Read(scale);
 
+            //Assert
             Assert.Equal("Comision 1", scale.Name);
         }
 
@@ -78,10 +86,24 @@ namespace Dal.Test.Config
         [Fact]
         public void ReadNotFoundTest()
         {
+            //Arrange
             Scale scale = new() { Id = 10 };
+
+            //Act
             scale = _persistent.Read(scale);
 
+            //Assert
             Assert.Equal(0, scale.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de una escala con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
         }
 
         /// <summary>
@@ -90,10 +112,24 @@ namespace Dal.Test.Config
         [Fact]
         public void InsertTest()
         {
+            //Arrange
             Scale scale = new() { Code = "C4", Name = "Comision 4", Comission = 4000, Order = 4 };
+
+            //Act
             scale = _persistent.Insert(scale, new() { Id = 1 });
 
+            //Assert
             Assert.NotEqual(0, scale.Id);
+        }
+
+        /// <summary>
+        /// Prueba la inserción de una escala con error
+        /// </summary>
+        [Fact]
+        public void InsertWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Insert(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -102,13 +138,26 @@ namespace Dal.Test.Config
         [Fact]
         public void UpdateTest()
         {
+            //Arrange
             Scale scale = new() { Id = 2, Code = "C5", Name = "Comision 5", Comission = 5000, Order = 5 };
-            _ = _persistent.Update(scale, new() { Id = 1 });
-
             Scale scale2 = new() { Id = 2 };
+
+            //Act
+            _ = _persistent.Update(scale, new() { Id = 1 });
             scale2 = _persistent.Read(scale2);
 
+            //Assert
             Assert.NotEqual("Comision 2", scale2.Name);
+        }
+
+        /// <summary>
+        /// Prueba la actualización de una escala con error
+        /// </summary>
+        [Fact]
+        public void UpdateWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -117,13 +166,26 @@ namespace Dal.Test.Config
         [Fact]
         public void DeleteTest()
         {
+            //Arrange
             Scale scale = new() { Id = 3 };
-            _ = _persistent.Delete(scale, new() { Id = 1 });
-
             Scale scale2 = new() { Id = 3 };
+
+            //Act
+            _ = _persistent.Delete(scale, new() { Id = 1 });
             scale2 = _persistent.Read(scale2);
 
+            //Assert
             Assert.Equal(0, scale2.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de una escala con error
+        /// </summary>
+        [Fact]
+        public void DeleteWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 1 }));
         }
         #endregion
     }
