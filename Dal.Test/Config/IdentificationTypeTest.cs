@@ -30,6 +30,7 @@ namespace Dal.Test.Config
         /// </summary>
         public IdentificationTypeTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -45,8 +46,10 @@ namespace Dal.Test.Config
         [Fact]
         public void ListTest()
         {
+            //Act
             ListResult<IdentificationType> list = _persistent.List("ididentificationtype = 1", "name", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -57,6 +60,7 @@ namespace Dal.Test.Config
         [Fact]
         public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idtipoidentificacion = 1", "name", 1, 0));
         }
 
@@ -66,9 +70,13 @@ namespace Dal.Test.Config
         [Fact]
         public void ReadTest()
         {
+            //Arrange
             IdentificationType identificationType = new() { Id = 1 };
+
+            //Act
             identificationType = _persistent.Read(identificationType);
 
+            //Assert
             Assert.Equal("Cedula ciudadania", identificationType.Name);
         }
 
@@ -78,10 +86,24 @@ namespace Dal.Test.Config
         [Fact]
         public void ReadNotFoundTest()
         {
+            //Arrange
             IdentificationType identificationType = new() { Id = 10 };
+
+            //Act
             identificationType = _persistent.Read(identificationType);
 
+            //Assert
             Assert.Equal(0, identificationType.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de un tipo de identificación con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
         }
 
         /// <summary>
@@ -90,10 +112,24 @@ namespace Dal.Test.Config
         [Fact]
         public void InsertTest()
         {
+            //Arrange
             IdentificationType identificationType = new() { Name = "Prueba 1" };
+
+            //Act
             identificationType = _persistent.Insert(identificationType, new() { Id = 1 });
 
+            //Assert
             Assert.NotEqual(0, identificationType.Id);
+        }
+
+        /// <summary>
+        /// Prueba la inserción de un tipo de identificación con error
+        /// </summary>
+        [Fact]
+        public void InsertWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Insert(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -102,13 +138,26 @@ namespace Dal.Test.Config
         [Fact]
         public void UpdateTest()
         {
+            //Arrange
             IdentificationType identificationType = new() { Id = 2, Name = "Tarjeta de identidad" };
-            _ = _persistent.Update(identificationType, new() { Id = 1 });
-
             IdentificationType identificationType2 = new() { Id = 2 };
+
+            //Act
+            _ = _persistent.Update(identificationType, new() { Id = 1 });
             identificationType2 = _persistent.Read(identificationType2);
 
+            //Assert
             Assert.NotEqual("Cedula extranjeria", identificationType2.Name);
+        }
+
+        /// <summary>
+        /// Prueba la actualización de un tipo de identificación con error
+        /// </summary>
+        [Fact]
+        public void UpdateWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -117,13 +166,26 @@ namespace Dal.Test.Config
         [Fact]
         public void DeleteTest()
         {
+            //Arrange
             IdentificationType identificationType = new() { Id = 3 };
-            _ = _persistent.Delete(identificationType, new() { Id = 1 });
-
             IdentificationType identificationType2 = new() { Id = 3 };
+
+            //Act
+            _ = _persistent.Delete(identificationType, new() { Id = 1 });
             identificationType2 = _persistent.Read(identificationType2);
 
+            //Assert
             Assert.Equal(0, identificationType2.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de un tipo de identificación con error
+        /// </summary>
+        [Fact]
+        public void DeleteWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 1 }));
         }
         #endregion
     }

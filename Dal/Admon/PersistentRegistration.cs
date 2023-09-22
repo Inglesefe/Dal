@@ -140,7 +140,7 @@ namespace Dal.Admon
                     "registration",
                     "INSERT INTO registration (idoffice, date, contract_number, idowner, idbeneficiary1, idbeneficiary2, idplan) " +
                     "VALUES " +
-                    "(" + entity.Office.Id + ", '" + entity.Date + "', '" + entity.ContractNumber + "', " +
+                    "(" + entity.Office.Id + ", '" + entity.Date.ToString("yyyy-MM-dd") + "', '" + entity.ContractNumber + "', " +
                     entity.Owner.Id + ", " + (entity.Beneficiary1?.Id.ToString() ?? "NULL") + ", " + (entity.Beneficiary2?.Id.ToString() ?? "NULL") + ", " + entity.Plan.Id + ")",
                     user.Id);
                 return entity;
@@ -182,7 +182,7 @@ namespace Dal.Admon
                 LogUpdate(
                     entity.Id,
                     "registration",
-                    "UPDATE registration SET idoffice = " + entity.Office.Id + ", date = '" + entity.Date + "', contract_number = '" + entity.ContractNumber + "', " +
+                    "UPDATE registration SET idoffice = " + entity.Office.Id + ", date = '" + entity.Date.ToString("yyyy-MM-dd") + "', contract_number = '" + entity.ContractNumber + "', " +
                     "idowner = " + entity.Owner.Id + ", idbeneficiary1 = " + (entity.Beneficiary1?.Id.ToString() ?? "NULL") + ", idbeneficiary2 = " + (entity.Beneficiary2?.Id.ToString() ?? "NULL") + ", " +
                     "idplan = " + entity.Plan.Id + " WHERE idregistration = " + entity.Id,
                     user.Id);

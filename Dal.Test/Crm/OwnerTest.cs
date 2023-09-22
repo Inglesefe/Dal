@@ -30,6 +30,7 @@ namespace Dal.Test.Crm
         /// </summary>
         public OwnerTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -45,8 +46,10 @@ namespace Dal.Test.Crm
         [Fact]
         public void ListTest()
         {
+            //Act
             ListResult<Owner> list = _persistent.List("idowner = 1", "idowner", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -57,6 +60,7 @@ namespace Dal.Test.Crm
         [Fact]
         public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idtitular = 1", "name", 1, 0));
         }
 
@@ -66,9 +70,13 @@ namespace Dal.Test.Crm
         [Fact]
         public void ReadTest()
         {
+            //Arrange
             Owner owner = new() { Id = 1 };
+
+            //Act
             owner = _persistent.Read(owner);
 
+            //Assert
             Assert.Equal("Leandro Baena Torres", owner.Name);
         }
 
@@ -78,10 +86,24 @@ namespace Dal.Test.Crm
         [Fact]
         public void ReadNotFoundTest()
         {
+            //Arrange
             Owner owner = new() { Id = 10 };
+
+            //Act
             owner = _persistent.Read(owner);
 
+            //Assert
             Assert.Equal(0, owner.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de un titular con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
         }
 
         /// <summary>
@@ -90,6 +112,7 @@ namespace Dal.Test.Crm
         [Fact]
         public void InsertTest()
         {
+            //Arrange
             Owner owner = new()
             {
                 Name = "Prueba 1",
@@ -101,8 +124,11 @@ namespace Dal.Test.Crm
                 PhoneOffice = "2864951753",
                 Email = "prueba@prueba.com"
             };
+
+            //Act
             owner = _persistent.Insert(owner, new() { Id = 1 });
 
+            //Assert
             Assert.NotEqual(0, owner.Id);
         }
 
@@ -112,6 +138,7 @@ namespace Dal.Test.Crm
         [Fact]
         public void InsertDuplicateTest()
         {
+            //Arrange
             Owner owner = new()
             {
                 Name = "Prueba 1",
@@ -124,6 +151,7 @@ namespace Dal.Test.Crm
                 Email = "prueba@prueba.com"
             };
 
+            //Act, Assert
             _ = Assert.Throws<PersistentException>(() => _persistent.Insert(owner, new() { Id = 1 }));
         }
 
@@ -133,6 +161,7 @@ namespace Dal.Test.Crm
         [Fact]
         public void UpdateTest()
         {
+            //Arrange
             Owner owner = new()
             {
                 Id = 2,
@@ -145,12 +174,24 @@ namespace Dal.Test.Crm
                 PhoneOffice = "2864951753-1",
                 Email = "prueba2@prueba.com"
             };
-            _ = _persistent.Update(owner, new() { Id = 1 });
-
             Owner owner2 = new() { Id = 2 };
+
+            //Act
+            _ = _persistent.Update(owner, new() { Id = 1 });
             owner2 = _persistent.Read(owner2);
 
+            //Assert
             Assert.NotEqual("David Santiago Baena Barreto", owner2.Name);
+        }
+
+        /// <summary>
+        /// Prueba la actualización de un titular con error
+        /// </summary>
+        [Fact]
+        public void UpdateWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -159,13 +200,26 @@ namespace Dal.Test.Crm
         [Fact]
         public void DeleteTest()
         {
+            //Arrange
             Owner owner = new() { Id = 3 };
-            _ = _persistent.Delete(owner, new() { Id = 1 });
-
             Owner owner2 = new() { Id = 3 };
+
+            //Act
+            _ = _persistent.Delete(owner, new() { Id = 1 });
             owner2 = _persistent.Read(owner2);
 
+            //Assert
             Assert.Equal(0, owner2.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de un titular con error
+        /// </summary>
+        [Fact]
+        public void DeleteWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 1 }));
         }
         #endregion
     }

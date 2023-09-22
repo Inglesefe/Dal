@@ -1,16 +1,16 @@
-using Dal.Cont;
+using Dal.Admon;
 using Dal.Dto;
 using Dal.Exceptions;
-using Entities.Cont;
+using Entities.Admon;
 using Microsoft.Extensions.Configuration;
 
-namespace Dal.Test.Cont
+namespace Dal.Test.Admon
 {
     /// <summary>
-    /// Realiza las pruebas sobre la clase de persistencia de números de consecutivo
+    /// Realiza las pruebas sobre la clase de persistencia de cuotas de matrículas
     /// </summary>
     [Collection("Tests")]
-    public class ConsecutiveNumberTest
+    public class FeeTest
     {
         #region Attributes
         /// <summary>
@@ -19,16 +19,16 @@ namespace Dal.Test.Cont
         private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Administrador de la persistencia de los números de consecutivo
+        /// Administrador de la persistencia de las cuotas de matrículas
         /// </summary>
-        private readonly PersistentConsecutiveNumber _persistent;
+        private readonly PersistentFee _persistent;
         #endregion
 
         #region Constructors
         /// <summary>
         /// Inicializa la configuración de la prueba
         /// </summary>
-        public ConsecutiveNumberTest()
+        public FeeTest()
         {
             //Arrange
             _configuration = new ConfigurationBuilder()
@@ -41,13 +41,13 @@ namespace Dal.Test.Cont
 
         #region Methods
         /// <summary>
-        /// Prueba la consulta de un listado de números de consecutivo con filtros, ordenamientos y límite
+        /// Prueba la consulta de un listado de cuotas de matrículas con filtros, ordenamientos y límite
         /// </summary>
         [Fact]
         public void ListTest()
         {
             //Act
-            ListResult<ConsecutiveNumber> list = _persistent.List("idconsecutivenumber = 1", "idconsecutivenumber", 1, 0);
+            ListResult<Fee> list = _persistent.List("idfee = 1", "", 1, 0);
 
             //Assert
             Assert.NotEmpty(list.List);
@@ -55,49 +55,49 @@ namespace Dal.Test.Cont
         }
 
         /// <summary>
-        /// Prueba la consulta de un listado de números de consecutivo con filtros, ordenamientos y límite y con errores
+        /// Prueba la consulta de un listado de cuotas de matrículas con filtros, ordenamientos y límite y con errores
         /// </summary>
         [Fact]
         public void ListWithErrorTest()
         {
             //Act, Assert
-            Assert.Throws<PersistentException>(() => _persistent.List("idnumeroconsecutivo = 1", "name", 1, 0));
+            Assert.Throws<PersistentException>(() => _persistent.List("idcuota = 1", "name", 1, 0));
         }
 
         /// <summary>
-        /// Prueba la consulta de un número de consecutivo dada su identificador
+        /// Prueba la consulta de una cuota de matrícula dada su identificador
         /// </summary>
         [Fact]
         public void ReadTest()
         {
             //Arrange
-            ConsecutiveNumber number = new() { Id = 1 };
+            Fee fee = new() { Id = 1 };
 
             //Act
-            number = _persistent.Read(number);
+            fee = _persistent.Read(fee);
 
             //Assert
-            Assert.Equal("9999999999", number.Number);
+            Assert.Equal(1000, fee.Value);
         }
 
         /// <summary>
-        /// Prueba la consulta de un número de consecutivo que no existe dado su identificador
+        /// Prueba la consulta de una cuota de matrícula que no existe dado su identificador
         /// </summary>
         [Fact]
         public void ReadNotFoundTest()
         {
             //Arrange
-            ConsecutiveNumber number = new() { Id = 10 };
+            Fee fee = new() { Id = 10 };
 
             //Act
-            number = _persistent.Read(number);
+            fee = _persistent.Read(fee);
 
             //Assert
-            Assert.Equal(0, number.Id);
+            Assert.Equal(0, fee.Id);
         }
 
         /// <summary>
-        /// Prueba la consulta de un número de consecutivo con error
+        /// Prueba la consulta de una cuota de matrícula con error
         /// </summary>
         [Fact]
         public void ReadWithErrorTest()
@@ -107,51 +107,54 @@ namespace Dal.Test.Cont
         }
 
         /// <summary>
-        /// Prueba la inserción de un número de consecutivo
+        /// Prueba la inserción de una cuota de matrícula
         /// </summary>
         [Fact]
         public void InsertTest()
         {
             //Arrange
-            ConsecutiveNumber number = new() { ConsecutiveType = new() { Id = 1 }, City = new() { Id = 1 }, Number = "66666666666" };
+            Fee fee = new() { Registration = new() { Id = 1 }, Value = 4000, Number = 4, IncomeType = new() { Id = 1 }, DueDate = DateTime.Now };
 
             //Act
-            number = _persistent.Insert(number, new() { Id = 1 });
+            fee = _persistent.Insert(fee, new() { Id = 1 });
 
             //Assert
-            Assert.NotEqual(0, number.Id);
+            Assert.NotEqual(0, fee.Id);
         }
 
         /// <summary>
-        /// Prueba la inserción de un número de consecutivo con error
+        /// Prueba la inserción de una cuota de matrícula con identificación duplicada
         /// </summary>
         [Fact]
-        public void InsertWithErrorTest()
+        public void InsertDuplicateTest()
         {
+            //Assert
+            Fee fee = new() { Registration = new() { Id = 1 }, Value = 6000, Number = 1, IncomeType = new() { Id = 1 }, DueDate = DateTime.Now };
+
             //Act, Assert
-            Assert.Throws<PersistentException>(() => _persistent.Insert(null, new() { Id = 1 }));
+            _ = Assert.Throws<PersistentException>(() => _persistent.Insert(fee, new() { Id = 1 }));
         }
 
         /// <summary>
-        /// Prueba la actualización de un número de consecutivo
+        /// Prueba la actualización de una cuota de matrícula
         /// </summary>
         [Fact]
         public void UpdateTest()
         {
-            //Arrange
-            ConsecutiveNumber number = new() { Id = 2, ConsecutiveType = new() { Id = 1 }, Number = "55555555555" };
-            ConsecutiveNumber number2 = new() { Id = 2 };
-
-            //Act
-            _ = _persistent.Update(number, new() { Id = 1 });
-            number2 = _persistent.Read(number2);
+            //Assert
+            Fee fee = new() { Id = 2, Registration = new() { Id = 1 }, Value = 5000, Number = 2, IncomeType = new() { Id = 1 }, DueDate = DateTime.Now };
+            Fee fee2 = new() { Id = 2 };
 
             //Assert
-            Assert.NotEqual("8888888888", number2.Number);
+            _ = _persistent.Update(fee, new() { Id = 1 });
+            fee2 = _persistent.Read(fee2);
+
+            //Assert
+            Assert.NotEqual(2000, fee2.Value);
         }
 
         /// <summary>
-        /// Prueba la actualización de un número de consecutivo con error
+        /// Prueba la actualización de una cuota de matrícula con error
         /// </summary>
         [Fact]
         public void UpdateWithErrorTest()
@@ -161,25 +164,25 @@ namespace Dal.Test.Cont
         }
 
         /// <summary>
-        /// Prueba la eliminación de un número de consecutivo
+        /// Prueba la eliminación de una cuota de matrícula
         /// </summary>
         [Fact]
         public void DeleteTest()
         {
             //Arrange
-            ConsecutiveNumber number = new() { Id = 3 };
-            ConsecutiveNumber number2 = new() { Id = 3 };
+            Fee fee = new() { Id = 3 };
+            Fee fee2 = new() { Id = 3 };
 
             //Act
-            _ = _persistent.Delete(number, new() { Id = 1 });
-            number2 = _persistent.Read(number2);
+            _ = _persistent.Delete(fee, new() { Id = 1 });
+            fee2 = _persistent.Read(fee2);
 
             //Assert
-            Assert.Equal(0, number2.Id);
+            Assert.Equal(0, fee2.Id);
         }
 
         /// <summary>
-        /// Prueba la eliminación de un número de consecutivo con error
+        /// Prueba la eliminación de una cuota de matrícula con error
         /// </summary>
         [Fact]
         public void DeleteWithErrorTest()

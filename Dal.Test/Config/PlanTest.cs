@@ -30,6 +30,7 @@ namespace Dal.Test.Config
         /// </summary>
         public PlanTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -45,8 +46,10 @@ namespace Dal.Test.Config
         [Fact]
         public void ListTest()
         {
+            //Act
             ListResult<Plan> list = _persistent.List("idplan = 1", "value", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -57,6 +60,7 @@ namespace Dal.Test.Config
         [Fact]
         public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idplan = 1", "valor", 1, 0));
         }
 
@@ -66,9 +70,13 @@ namespace Dal.Test.Config
         [Fact]
         public void ReadTest()
         {
+            //Arrange
             Plan plan = new() { Id = 1 };
+
+            //Act
             plan = _persistent.Read(plan);
 
+            //Assert
             Assert.Equal(12, plan.InstallmentsNumber);
         }
 
@@ -78,10 +86,24 @@ namespace Dal.Test.Config
         [Fact]
         public void ReadNotFoundTest()
         {
+            //Arrange
             Plan plan = new() { Id = 10 };
+
+            //Act
             plan = _persistent.Read(plan);
 
+            //Assert
             Assert.Equal(0, plan.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de un plan con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
         }
 
         /// <summary>
@@ -90,10 +112,24 @@ namespace Dal.Test.Config
         [Fact]
         public void InsertTest()
         {
+            //Arrange
             Plan plan = new() { InitialFee = 5000, InstallmentsNumber = 5, InstallmentValue = 250, Value = 75000, Active = true, Description = "Plan de prueba de insercion" };
+
+            //Act
             plan = _persistent.Insert(plan, new() { Id = 1 });
 
+            //Assert
             Assert.NotEqual(0, plan.Id);
+        }
+
+        /// <summary>
+        /// Prueba la inserción de un plan con error
+        /// </summary>
+        [Fact]
+        public void InsertWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Insert(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -102,13 +138,26 @@ namespace Dal.Test.Config
         [Fact]
         public void UpdateTest()
         {
+            //Arrange
             Plan plan = new() { Id = 2, InitialFee = 54321, InstallmentsNumber = 35, InstallmentValue = 750, Value = 85000, Active = true, Description = "Plan de prueba de actualización" };
-            _ = _persistent.Update(plan, new() { Id = 1 });
-
             Plan plan2 = new() { Id = 2 };
+
+            //Act
+            _ = _persistent.Update(plan, new() { Id = 1 });
             plan2 = _persistent.Read(plan2);
 
+            //Assert
             Assert.NotEqual(15, plan2.InstallmentsNumber);
+        }
+
+        /// <summary>
+        /// Prueba la actualización de un plan con error
+        /// </summary>
+        [Fact]
+        public void UpdateWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -117,13 +166,26 @@ namespace Dal.Test.Config
         [Fact]
         public void DeleteTest()
         {
+            //Arrange
             Plan plan = new() { Id = 3 };
-            _ = _persistent.Delete(plan, new() { Id = 1 });
-
             Plan plan2 = new() { Id = 3 };
+
+            //Act
+            _ = _persistent.Delete(plan, new() { Id = 1 });
             plan2 = _persistent.Read(plan2);
 
+            //Assert
             Assert.Equal(0, plan2.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de un plan con error
+        /// </summary>
+        [Fact]
+        public void DeleteWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 1 }));
         }
         #endregion
     }

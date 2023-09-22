@@ -30,6 +30,7 @@ namespace Dal.Test.Admon
         /// </summary>
         public RegistrationScaleTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -45,8 +46,10 @@ namespace Dal.Test.Admon
         [Fact]
         public void ListTest()
         {
+            //Act
             ListResult<RegistrationScale> list = _persistent.List("idregistration = 1", "", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -57,6 +60,7 @@ namespace Dal.Test.Admon
         [Fact]
         public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idmatricula = 1", "name", 1, 0));
         }
 
@@ -66,9 +70,13 @@ namespace Dal.Test.Admon
         [Fact]
         public void ReadTest()
         {
+            //Arrange
             RegistrationScale registration = new() { Id = 1 };
+
+            //Act
             registration = _persistent.Read(registration);
 
+            //Assert
             Assert.Equal(1, registration.Scale.Id);
         }
 
@@ -78,10 +86,24 @@ namespace Dal.Test.Admon
         [Fact]
         public void ReadNotFoundTest()
         {
+            //Arrange
             RegistrationScale registration = new() { Id = 10 };
+
+            //Act
             registration = _persistent.Read(registration);
 
+            //Assert
             Assert.Equal(0, registration.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de una relación entre matrícula, escala y ejecutivo de cuenta con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
         }
 
         /// <summary>
@@ -90,15 +112,29 @@ namespace Dal.Test.Admon
         [Fact]
         public void InsertTest()
         {
+            //Arrange
             RegistrationScale registration = new()
             {
                 Registration = new() { Id = 1 },
                 Scale = new() { Id = 2 },
                 AccountExecutive = new() { Id = 2 }
             };
+
+            //Act
             registration = _persistent.Insert(registration, new() { Id = 1 });
 
+            //Assert
             Assert.NotEqual(0, registration.Id);
+        }
+
+        /// <summary>
+        /// Prueba la inserción de una relación entre matrícula, escala y ejecutivo de cuenta con error
+        /// </summary>
+        [Fact]
+        public void InsertWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Insert(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -107,18 +143,31 @@ namespace Dal.Test.Admon
         [Fact]
         public void UpdateTest()
         {
+            //Arrange
             RegistrationScale registration = new()
             {
                 Id = 2,
                 Scale = new() { Id = 2 },
                 AccountExecutive = new() { Id = 4 }
             };
-            _ = _persistent.Update(registration, new() { Id = 1 });
-
             RegistrationScale registration2 = new() { Id = 2 };
+
+            //Act
+            _ = _persistent.Update(registration, new() { Id = 1 });
             registration2 = _persistent.Read(registration2);
 
+            //Assert
             Assert.NotEqual(2, registration2.AccountExecutive.Id);
+        }
+
+        /// <summary>
+        /// Prueba la actualización de una relación entre matrícula, escala y ejecutivo de cuenta con error
+        /// </summary>
+        [Fact]
+        public void UpdateWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -127,13 +176,26 @@ namespace Dal.Test.Admon
         [Fact]
         public void DeleteTest()
         {
+            //Arrange
             RegistrationScale registration = new() { Id = 3 };
-            _ = _persistent.Delete(registration, new() { Id = 1 });
-
             RegistrationScale registration2 = new() { Id = 3 };
+
+            //Act
+            _ = _persistent.Delete(registration, new() { Id = 1 });
             registration2 = _persistent.Read(registration2);
 
+            //Assert
             Assert.Equal(0, registration2.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de una relación entre matrícula, escala y ejecutivo de cuenta con error
+        /// </summary>
+        [Fact]
+        public void DeleteWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 1 }));
         }
         #endregion
     }
