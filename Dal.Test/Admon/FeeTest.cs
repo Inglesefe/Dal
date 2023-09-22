@@ -30,6 +30,7 @@ namespace Dal.Test.Admon
         /// </summary>
         public FeeTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -45,8 +46,10 @@ namespace Dal.Test.Admon
         [Fact]
         public void ListTest()
         {
+            //Act
             ListResult<Fee> list = _persistent.List("idfee = 1", "", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -57,6 +60,7 @@ namespace Dal.Test.Admon
         [Fact]
         public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idcuota = 1", "name", 1, 0));
         }
 
@@ -66,9 +70,13 @@ namespace Dal.Test.Admon
         [Fact]
         public void ReadTest()
         {
+            //Arrange
             Fee fee = new() { Id = 1 };
+
+            //Act
             fee = _persistent.Read(fee);
 
+            //Assert
             Assert.Equal(1000, fee.Value);
         }
 
@@ -78,10 +86,24 @@ namespace Dal.Test.Admon
         [Fact]
         public void ReadNotFoundTest()
         {
+            //Arrange
             Fee fee = new() { Id = 10 };
+
+            //Act
             fee = _persistent.Read(fee);
 
+            //Assert
             Assert.Equal(0, fee.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de una cuota de matrícula con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
         }
 
         /// <summary>
@@ -90,9 +112,13 @@ namespace Dal.Test.Admon
         [Fact]
         public void InsertTest()
         {
+            //Arrange
             Fee fee = new() { Registration = new() { Id = 1 }, Value = 4000, Number = 4, IncomeType = new() { Id = 1 }, DueDate = DateTime.Now };
+
+            //Act
             fee = _persistent.Insert(fee, new() { Id = 1 });
 
+            //Assert
             Assert.NotEqual(0, fee.Id);
         }
 
@@ -102,8 +128,10 @@ namespace Dal.Test.Admon
         [Fact]
         public void InsertDuplicateTest()
         {
+            //Assert
             Fee fee = new() { Registration = new() { Id = 1 }, Value = 6000, Number = 1, IncomeType = new() { Id = 1 }, DueDate = DateTime.Now };
 
+            //Act, Assert
             _ = Assert.Throws<PersistentException>(() => _persistent.Insert(fee, new() { Id = 1 }));
         }
 
@@ -113,13 +141,26 @@ namespace Dal.Test.Admon
         [Fact]
         public void UpdateTest()
         {
+            //Assert
             Fee fee = new() { Id = 2, Registration = new() { Id = 1 }, Value = 5000, Number = 2, IncomeType = new() { Id = 1 }, DueDate = DateTime.Now };
-            _ = _persistent.Update(fee, new() { Id = 1 });
-
             Fee fee2 = new() { Id = 2 };
+
+            //Assert
+            _ = _persistent.Update(fee, new() { Id = 1 });
             fee2 = _persistent.Read(fee2);
 
+            //Assert
             Assert.NotEqual(2000, fee2.Value);
+        }
+
+        /// <summary>
+        /// Prueba la actualización de una cuota de matrícula con error
+        /// </summary>
+        [Fact]
+        public void UpdateWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -128,13 +169,26 @@ namespace Dal.Test.Admon
         [Fact]
         public void DeleteTest()
         {
+            //Arrange
             Fee fee = new() { Id = 3 };
-            _ = _persistent.Delete(fee, new() { Id = 1 });
-
             Fee fee2 = new() { Id = 3 };
+
+            //Act
+            _ = _persistent.Delete(fee, new() { Id = 1 });
             fee2 = _persistent.Read(fee2);
 
+            //Assert
             Assert.Equal(0, fee2.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de una cuota de matrícula con error
+        /// </summary>
+        [Fact]
+        public void DeleteWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 1 }));
         }
         #endregion
     }

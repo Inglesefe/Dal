@@ -30,6 +30,7 @@ namespace Dal.Test.Admon
         /// </summary>
         public RegistrationTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -45,8 +46,10 @@ namespace Dal.Test.Admon
         [Fact]
         public void ListTest()
         {
+            //Act
             ListResult<Registration> list = _persistent.List("idregistration = 1", "", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -57,6 +60,7 @@ namespace Dal.Test.Admon
         [Fact]
         public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idmatricula = 1", "name", 1, 0));
         }
 
@@ -66,9 +70,13 @@ namespace Dal.Test.Admon
         [Fact]
         public void ReadTest()
         {
+            //Arrange
             Registration registration = new() { Id = 1 };
+
+            //Act
             registration = _persistent.Read(registration);
 
+            //Assert
             Assert.Equal("255657", registration.ContractNumber);
         }
 
@@ -78,10 +86,24 @@ namespace Dal.Test.Admon
         [Fact]
         public void ReadNotFoundTest()
         {
+            //Arrange
             Registration registration = new() { Id = 10 };
+
+            //Act
             registration = _persistent.Read(registration);
 
+            //Assert
             Assert.Equal(0, registration.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de una matrícula con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
         }
 
         /// <summary>
@@ -90,6 +112,7 @@ namespace Dal.Test.Admon
         [Fact]
         public void InsertTest()
         {
+            //Arrange
             Registration registration = new()
             {
                 Office = new() { Id = 1 },
@@ -100,9 +123,22 @@ namespace Dal.Test.Admon
                 Beneficiary2 = null,
                 Plan = new() { Id = 1 }
             };
+
+            //Act
             registration = _persistent.Insert(registration, new() { Id = 1 });
 
+            //Assert
             Assert.NotEqual(0, registration.Id);
+        }
+
+        /// <summary>
+        /// Prueba la inserción de una matrícula con error
+        /// </summary>
+        [Fact]
+        public void InsertWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Insert(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -111,6 +147,7 @@ namespace Dal.Test.Admon
         [Fact]
         public void UpdateTest()
         {
+            //Arrange
             Registration registration = new()
             {
                 Id = 2,
@@ -122,12 +159,24 @@ namespace Dal.Test.Admon
                 Beneficiary2 = null,
                 Plan = new() { Id = 1 }
             };
-            _ = _persistent.Update(registration, new() { Id = 1 });
-
             Registration registration2 = new() { Id = 2 };
+
+            //Act
+            _ = _persistent.Update(registration, new() { Id = 1 });
             registration2 = _persistent.Read(registration2);
 
+            //Assert
             Assert.NotEqual("256566", registration2.ContractNumber);
+        }
+
+        /// <summary>
+        /// Prueba la actualización de una matrícula con error
+        /// </summary>
+        [Fact]
+        public void UpdateWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -136,13 +185,26 @@ namespace Dal.Test.Admon
         [Fact]
         public void DeleteTest()
         {
+            //Arrange
             Registration registration = new() { Id = 3 };
-            _ = _persistent.Delete(registration, new() { Id = 1 });
-
             Registration registration2 = new() { Id = 3 };
+
+            //Act
+            _ = _persistent.Delete(registration, new() { Id = 1 });
             registration2 = _persistent.Read(registration2);
 
+            //Assert
             Assert.Equal(0, registration2.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de una matrícula con error
+        /// </summary>
+        [Fact]
+        public void DeleteWithErrorTest()
+        {
+            //Assert
+            Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 1 }));
         }
         #endregion
     }

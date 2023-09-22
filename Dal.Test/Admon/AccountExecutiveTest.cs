@@ -30,6 +30,7 @@ namespace Dal.Test.Admon
         /// </summary>
         public AccountExecutiveTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -45,8 +46,10 @@ namespace Dal.Test.Admon
         [Fact]
         public void ListTest()
         {
+            //Act
             ListResult<AccountExecutive> list = _persistent.List("idaccountexecutive = 1", "", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -57,6 +60,7 @@ namespace Dal.Test.Admon
         [Fact]
         public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idejecutivocuenta = 1", "name", 1, 0));
         }
 
@@ -66,9 +70,13 @@ namespace Dal.Test.Admon
         [Fact]
         public void ReadTest()
         {
+            //Arrange
             AccountExecutive executive = new() { Id = 1 };
+
+            //Act
             executive = _persistent.Read(executive);
 
+            //Assert
             Assert.Equal("Leandro Baena Torres", executive.Name);
         }
 
@@ -78,10 +86,25 @@ namespace Dal.Test.Admon
         [Fact]
         public void ReadNotFoundTest()
         {
+            //Arrange
             AccountExecutive executive = new() { Id = 10 };
+
+            //Act
             executive = _persistent.Read(executive);
 
+            //Assert
             Assert.Equal(0, executive.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de un ejecutivo de cuenta con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
+
         }
 
         /// <summary>
@@ -90,9 +113,13 @@ namespace Dal.Test.Admon
         [Fact]
         public void InsertTest()
         {
+            //Arrange
             AccountExecutive executive = new() { Name = "Prueba 1", IdentificationType = new() { Id = 1 }, Identification = "963258741" };
+
+            //Act
             executive = _persistent.Insert(executive, new() { Id = 1 });
 
+            //Assert
             Assert.NotEqual(0, executive.Id);
         }
 
@@ -102,8 +129,10 @@ namespace Dal.Test.Admon
         [Fact]
         public void InsertDuplicateTest()
         {
+            //Arrange
             AccountExecutive executive = new() { Name = "Error", IdentificationType = new() { Id = 1 }, Identification = "123456789" };
 
+            //Act, Assert
             _ = Assert.Throws<PersistentException>(() => _persistent.Insert(executive, new() { Id = 1 }));
         }
 
@@ -113,13 +142,26 @@ namespace Dal.Test.Admon
         [Fact]
         public void UpdateTest()
         {
+            //Arrange
             AccountExecutive executive = new() { Id = 2, Name = "Prueba actualizar", IdentificationType = new() { Id = 1 }, Identification = "1597536482" };
-            _ = _persistent.Update(executive, new() { Id = 1 });
-
             AccountExecutive executive2 = new() { Id = 2 };
+
+            //Act
+            _ = _persistent.Update(executive, new() { Id = 1 });
             executive2 = _persistent.Read(executive2);
 
+            //Assert
             Assert.NotEqual("David Santiago Baena Barreto", executive2.Name);
+        }
+
+        /// <summary>
+        /// Prueba la actualización de un ejecutivo de cuenta con error
+        /// </summary>
+        [Fact]
+        public void UpdateWithErrorTest()
+        {
+            //Act, Assert
+            _ = Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -128,13 +170,26 @@ namespace Dal.Test.Admon
         [Fact]
         public void DeleteTest()
         {
+            //Arrange
             AccountExecutive executive = new() { Id = 3 };
-            _ = _persistent.Delete(executive, new() { Id = 1 });
-
             AccountExecutive executive2 = new() { Id = 3 };
+
+            //Act
+            _ = _persistent.Delete(executive, new() { Id = 1 });
             executive2 = _persistent.Read(executive2);
 
+            //Assert
             Assert.Equal(0, executive2.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de un ejecutivo de cuenta con error
+        /// </summary>
+        [Fact]
+        public void DeleteWithErrorTest()
+        {
+            //Act, Assert
+            _ = Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 1 }));
         }
         #endregion
     }
