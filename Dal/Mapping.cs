@@ -194,7 +194,9 @@ namespace Dal
             {
                 "idincometype" => type.GetProperty("Id"),
                 "code" => type.GetProperty("Code"),
+                "incometype_code" => type.GetProperty("Code"),
                 "name" => type.GetProperty("Name"),
+                "incometype" => type.GetProperty("Name"),
                 _ => null,
             };
         }
@@ -496,6 +498,63 @@ namespace Dal
                 "input" => type.GetProperty("Input"),
                 "output" => type.GetProperty("Output"),
                 "iduser" => type.GetProperty("User"),
+                _ => null,
+            };
+        }
+
+        /// <summary>
+        /// Mapeos de la entidad Fee
+        /// </summary>
+        /// <param name="obj">Objeto de la clase Fee</param>
+        /// <param name="columnName">Nombre de la columna</param>
+        /// <returns>Información de la propiedad mapeada</returns>
+        public static PropertyInfo? GetMapping(this Fee obj, string columnName)
+        {
+            Type type = obj.GetType();
+            return columnName switch
+            {
+                "idfee" => type.GetProperty("Id"),
+                "value" => type.GetProperty("Value"),
+                "number" => type.GetProperty("Number"),
+                "dueDate" => type.GetProperty("DueDate"),
+                _ => null,
+            };
+        }
+
+        /// <summary>
+        /// Mapeos de la entidad PaymentType
+        /// </summary>
+        /// <param name="obj">Objeto de la clase PaymentType</param>
+        /// <param name="columnName">Nombre de la columna</param>
+        /// <returns>Información de la propiedad mapeada</returns>
+        public static PropertyInfo? GetMapping(this PaymentType obj, string columnName)
+        {
+            Type type = obj.GetType();
+            return columnName switch
+            {
+                "idpaymenttype" => type.GetProperty("Id"),
+                "name" => type.GetProperty("Name"),
+                "paymenttype" => type.GetProperty("Name"),
+                _ => null,
+            };
+        }
+
+        /// <summary>
+        /// Mapeos de la entidad Payment
+        /// </summary>
+        /// <param name="obj">Objeto de la clase Payment</param>
+        /// <param name="columnName">Nombre de la columna</param>
+        /// <returns>Información de la propiedad mapeada</returns>
+        public static PropertyInfo? GetMapping(this Payment obj, string columnName)
+        {
+            Type type = obj.GetType();
+            return columnName switch
+            {
+                "idpayment" => type.GetProperty("Id"),
+                "value" => type.GetProperty("Value"),
+                "date" => type.GetProperty("Date"),
+                "invoice" => type.GetProperty("Invoice"),
+                "proof" => type.GetProperty("Proof"),
                 _ => null,
             };
         }
