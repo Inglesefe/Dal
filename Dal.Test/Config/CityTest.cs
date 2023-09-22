@@ -30,6 +30,7 @@ namespace Dal.Test.Config
         /// </summary>
         public CityTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -66,7 +67,9 @@ namespace Dal.Test.Config
         [Fact]
         public void ReadTest()
         {
+            //Arrange
             City city = new() { Id = 1 };
+
             city = _persistent.Read(city);
 
             Assert.Equal("BOG", city.Code);
@@ -78,7 +81,9 @@ namespace Dal.Test.Config
         [Fact]
         public void ReadNotFoundTest()
         {
+            //Arrange
             City city = new() { Id = 10 };
+
             city = _persistent.Read(city);
 
             Assert.Equal(0, city.Id);
@@ -90,7 +95,9 @@ namespace Dal.Test.Config
         [Fact]
         public void InsertTest()
         {
+            //Arrange
             City city = new() { Country = new() { Id = 1 }, Code = "BUC", Name = "Bucaramanga" };
+
             city = _persistent.Insert(city, new() { Id = 1 });
 
             Assert.NotEqual(0, city.Id);
@@ -102,6 +109,7 @@ namespace Dal.Test.Config
         [Fact]
         public void InsertDuplicateTest()
         {
+            //Arrange
             City city = new() { Country = new() { Id = 1 }, Code = "BOG", Name = "Prueba 1" };
 
             _ = Assert.Throws<PersistentException>(() => _persistent.Insert(city, new() { Id = 1 }));
@@ -113,10 +121,11 @@ namespace Dal.Test.Config
         [Fact]
         public void UpdateTest()
         {
+            //Arrange
             City city = new() { Id = 2, Country = new() { Id = 1 }, Code = "BAQ", Name = "Barranquilla" };
-            _ = _persistent.Update(city, new() { Id = 1 });
-
             City country2 = new() { Id = 2 };
+
+            _ = _persistent.Update(city, new() { Id = 1 });
             country2 = _persistent.Read(country2);
 
             Assert.NotEqual("MED", country2.Code);
@@ -128,10 +137,11 @@ namespace Dal.Test.Config
         [Fact]
         public void DeleteTest()
         {
+            //Arrange
             City city = new() { Id = 3 };
-            _ = _persistent.Delete(city, new() { Id = 1 });
-
             City city2 = new() { Id = 3 };
+
+            _ = _persistent.Delete(city, new() { Id = 1 });
             city2 = _persistent.Read(city2);
 
             Assert.Equal(0, city2.Id);
