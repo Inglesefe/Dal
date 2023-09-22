@@ -30,6 +30,7 @@ namespace Dal.Test.Noti
         /// </summary>
         public TemplateTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -43,10 +44,12 @@ namespace Dal.Test.Noti
         /// Prueba la consulta de un listado de plantillas con filtros, ordenamientos y límite
         /// </summary>
         [Fact]
-        public void TemplateListTest()
+        public void ListTest()
         {
+            //Act
             ListResult<Template> list = _persistent.List("idtemplate = 1", "idtemplate", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -55,8 +58,9 @@ namespace Dal.Test.Noti
         /// Prueba la consulta de un listado de plantillas con filtros, ordenamientos y límite y con errores
         /// </summary>
         [Fact]
-        public void TemplateListWithErrorTest()
+        public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idplantilla = 1", "name", 1, 0));
         }
 
@@ -64,11 +68,15 @@ namespace Dal.Test.Noti
         /// Prueba la consulta de una plantilla dado su identificador
         /// </summary>
         [Fact]
-        public void TemplateReadTest()
+        public void ReadTest()
         {
+            //Arrange
             Template template = new() { Id = 1 };
+
+            //Act
             template = _persistent.Read(template);
 
+            //Assert
             Assert.Equal("Plantilla de prueba", template.Name);
         }
 
@@ -76,54 +84,108 @@ namespace Dal.Test.Noti
         /// Prueba la consulta de una plantilla que no existe dado su identificador
         /// </summary>
         [Fact]
-        public void TemplateReadNotFoundTest()
+        public void ReadNotFoundTest()
         {
+            //Arrange
             Template template = new() { Id = 10 };
+
+            //Act
             template = _persistent.Read(template);
 
+            //Assert
             Assert.Equal(0, template.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de una plantilla con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
         }
 
         /// <summary>
         /// Prueba la inserción de una plantilla
         /// </summary>
         [Fact]
-        public void TemplateInsertTest()
+        public void InsertTest()
         {
+            //Arrange
             Template template = new() { Name = "Plantilla insertada", Content = "<p>Prueba de una plantilla #{insertada}#</p>" };
+
+            //Act
             template = _persistent.Insert(template, new() { Id = 1 });
 
+            //Assert
             Assert.NotEqual(0, template.Id);
+        }
+
+        /// <summary>
+        /// Prueba la inserción de una plantilla con error
+        /// </summary>
+        [Fact]
+        public void InsertWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Insert(null, new() { Id = 1 }));
         }
 
         /// <summary>
         /// Prueba la actualización de una plantilla
         /// </summary>
         [Fact]
-        public void TemplateUpdateTest()
+        public void UpdateTest()
         {
+            //Arrange
             Template template = new() { Id = 2, Name = "Prueba actualizada", Content = "<h3>Contenido de una plantilla #{actualizada}#</h3>" };
-            _ = _persistent.Update(template, new() { Id = 1 });
-
             Template template2 = new() { Id = 2 };
+
+            //Act
+            _ = _persistent.Update(template, new() { Id = 1 });
             template2 = _persistent.Read(template2);
 
+            //Assert
             Assert.NotEqual("Plantilla a actualizar", template2.Name);
+        }
+
+        /// <summary>
+        /// Prueba la actualización de una plantilla con error
+        /// </summary>
+        [Fact]
+        public void UpdateWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 1 }));
         }
 
         /// <summary>
         /// Prueba la eliminación de una plantilla
         /// </summary>
         [Fact]
-        public void TemplateDeleteTest()
+        public void DeleteTest()
         {
+            //Arrange
             Template template = new() { Id = 3 };
-            _ = _persistent.Delete(template, new() { Id = 1 });
-
             Template template2 = new() { Id = 3 };
+
+            //Act
+            _ = _persistent.Delete(template, new() { Id = 1 });
             template2 = _persistent.Read(template2);
 
+            //Assert
             Assert.Equal(0, template2.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de una plantilla con error
+        /// </summary>
+        [Fact]
+        public void DeleteWithErrorTest()
+        {
+            //Assert
+            Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 1 }));
         }
         #endregion
     }

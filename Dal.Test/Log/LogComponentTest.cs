@@ -30,6 +30,7 @@ namespace Dal.Test.Log
         /// </summary>
         public LogComponentTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -43,10 +44,12 @@ namespace Dal.Test.Log
         /// Prueba la consulta de un listado de registros con filtros, ordenamientos y límite
         /// </summary>
         [Fact]
-        public void LogComponentListTest()
+        public void ListTest()
         {
+            //Act
             ListResult<LogComponent> list = _persistent.List("idlog = 1", "idlog", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -55,8 +58,9 @@ namespace Dal.Test.Log
         /// Prueba la consulta de un listado de registros con filtros, ordenamientos y límite y con errores
         /// </summary>
         [Fact]
-        public void LogComponentListWithErrorTest()
+        public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idregistro = 1", "name", 1, 0));
         }
 
@@ -64,11 +68,15 @@ namespace Dal.Test.Log
         /// Prueba la consulta de un registro dada su identificador
         /// </summary>
         [Fact]
-        public void LogComponentReadTest()
+        public void ReadTest()
         {
+            //Arrange
             LogComponent log = new() { Id = 1 };
+
+            //Act
             log = _persistent.Read(log);
 
+            //Assert
             Assert.Equal("Log", log.Controller);
         }
 
@@ -76,35 +84,67 @@ namespace Dal.Test.Log
         /// Prueba la consulta de un registro que no existe dado su identificador
         /// </summary>
         [Fact]
-        public void LogComponentReadNotFoundTest()
+        public void ReadNotFoundTest()
         {
+            //Arrange
             LogComponent log = new() { Id = 10 };
+
+            //Act
             log = _persistent.Read(log);
 
+            //Assert
             Assert.Equal(0, log.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de un registro con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
         }
 
         /// <summary>
         /// Prueba la inserción de un registro
         /// </summary>
         [Fact]
-        public void LogComponentInsertTest()
+        public void InsertTest()
         {
+            //Arrange
             LogComponent log = new() { Type = "I", Controller = "Log3", Method = "Test3", Input = "Entrada 3", Output = "Salida 3", User = 1 };
+
+            //Act
             log = _persistent.Insert(log);
 
+            //Assert
             Assert.NotEqual(0, log.Id);
+        }
+
+        /// <summary>
+        /// Prueba la inserción de un registro con error
+        /// </summary>
+        [Fact]
+        public void InsertWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Insert(null));
         }
 
         /// <summary>
         /// Prueba la actualización de un registro
         /// </summary>
         [Fact]
-        public void LogComponentUpdateTest()
+        public void UpdateTest()
         {
+            //Arrange
             LogComponent log = new() { Id = 1 };
+
+            //Act
             log = _persistent.Update(log);
 
+            //Assert
             Assert.Equal(1, log.Id);
         }
 
@@ -112,11 +152,15 @@ namespace Dal.Test.Log
         /// Prueba la eliminación de un registro
         /// </summary>
         [Fact]
-        public void LogComponentDeleteTest()
+        public void DeleteTest()
         {
+            //Arrange
             LogComponent log = new() { Id = 1 };
+
+            //Act
             log = _persistent.Delete(log);
 
+            //Assert
             Assert.Equal(1, log.Id);
         }
         #endregion

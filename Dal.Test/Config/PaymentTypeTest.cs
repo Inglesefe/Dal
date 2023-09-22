@@ -7,10 +7,10 @@ using Microsoft.Extensions.Configuration;
 namespace Dal.Test.Config
 {
     /// <summary>
-    /// Realiza las pruebas sobre la clase de persistencia de escalas
+    /// Realiza las pruebas sobre la clase de persistencia de tipos de pago
     /// </summary>
     [Collection("Tests")]
-    public class ScaleTest
+    public class PaymentTypeTest
     {
         #region Attributes
         /// <summary>
@@ -19,16 +19,16 @@ namespace Dal.Test.Config
         private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Administrador de la persistencia de las escalas
+        /// Administrador de la persistencia de los tipos de pago
         /// </summary>
-        private readonly PersistentScale _persistent;
+        private readonly PersistentPaymentType _persistent;
         #endregion
 
         #region Constructors
         /// <summary>
         /// Inicializa la configuración de la prueba
         /// </summary>
-        public ScaleTest()
+        public PaymentTypeTest()
         {
             //Arrange
             _configuration = new ConfigurationBuilder()
@@ -41,13 +41,13 @@ namespace Dal.Test.Config
 
         #region Methods
         /// <summary>
-        /// Prueba la consulta de un listado de escalas con filtros, ordenamientos y límite
+        /// Prueba la consulta de un listado de tipos de pago con filtros, ordenamientos y límite
         /// </summary>
         [Fact]
         public void ListTest()
         {
             //Act
-            ListResult<Scale> list = _persistent.List("idscale = 1", "name", 1, 0);
+            ListResult<PaymentType> list = _persistent.List("idpaymenttype = 1", "name", 1, 0);
 
             //Assert
             Assert.NotEmpty(list.List);
@@ -55,49 +55,49 @@ namespace Dal.Test.Config
         }
 
         /// <summary>
-        /// Prueba la consulta de un listado de escalas con filtros, ordenamientos y límite y con errores
+        /// Prueba la consulta de un listado de tipos de pago con filtros, ordenamientos y límite y con errores
         /// </summary>
         [Fact]
         public void ListWithErrorTest()
         {
             //Act, Assert
-            Assert.Throws<PersistentException>(() => _persistent.List("idescala = 1", "name", 1, 0));
+            Assert.Throws<PersistentException>(() => _persistent.List("idtipopago = 1", "name", 1, 0));
         }
 
         /// <summary>
-        /// Prueba la consulta de una escala dada su identificador
+        /// Prueba la consulta de un tipo de pago dada su identificador
         /// </summary>
         [Fact]
         public void ReadTest()
         {
             //Arrange
-            Scale scale = new() { Id = 1 };
+            PaymentType paymentType = new() { Id = 1 };
 
             //Act
-            scale = _persistent.Read(scale);
+            paymentType = _persistent.Read(paymentType);
 
             //Assert
-            Assert.Equal("Comision 1", scale.Name);
+            Assert.Equal("Efectivo", paymentType.Name);
         }
 
         /// <summary>
-        /// Prueba la consulta de una escala que no existe dado su identificador
+        /// Prueba la consulta de un tipo de pago que no existe dado su identificador
         /// </summary>
         [Fact]
         public void ReadNotFoundTest()
         {
             //Arrange
-            Scale scale = new() { Id = 10 };
+            PaymentType paymentType = new() { Id = 10 };
 
             //Act
-            scale = _persistent.Read(scale);
+            paymentType = _persistent.Read(paymentType);
 
             //Assert
-            Assert.Equal(0, scale.Id);
+            Assert.Equal(0, paymentType.Id);
         }
 
         /// <summary>
-        /// Prueba la consulta de una escala con error
+        /// Prueba la consulta de un tipo de pago con error
         /// </summary>
         [Fact]
         public void ReadWithErrorTest()
@@ -107,85 +107,85 @@ namespace Dal.Test.Config
         }
 
         /// <summary>
-        /// Prueba la inserción de una escala
+        /// Prueba la inserción de un tipo de pago
         /// </summary>
         [Fact]
         public void InsertTest()
         {
             //Arrange
-            Scale scale = new() { Code = "C4", Name = "Comision 4", Comission = 4000, Order = 4 };
+            PaymentType paymentType = new() { Name = "Daviplata" };
 
             //Act
-            scale = _persistent.Insert(scale, new() { Id = 1 });
+            paymentType = _persistent.Insert(paymentType, new() { Id = 1 });
 
             //Assert
-            Assert.NotEqual(0, scale.Id);
+            Assert.NotEqual(0, paymentType.Id);
         }
 
         /// <summary>
-        /// Prueba la inserción de una escala con error
+        /// Prueba la inserción de un tipo de pago con error
         /// </summary>
         [Fact]
         public void InsertWithErrorTest()
         {
             //Act, Assert
-            Assert.Throws<PersistentException>(() => _persistent.Insert(null, new() { Id = 1 }));
+            Assert.Throws<PersistentException>(() => _persistent.Insert(null, new() { Id = 0 }));
         }
 
         /// <summary>
-        /// Prueba la actualización de una escala
+        /// Prueba la actualización de un tipo de pago
         /// </summary>
         [Fact]
         public void UpdateTest()
         {
             //Arrange
-            Scale scale = new() { Id = 2, Code = "C5", Name = "Comision 5", Comission = 5000, Order = 5 };
-            Scale scale2 = new() { Id = 2 };
+            PaymentType paymentType = new() { Id = 2, Name = "Visa" };
+            PaymentType paymentType2 = new() { Id = 2 };
 
             //Act
-            _ = _persistent.Update(scale, new() { Id = 1 });
-            scale2 = _persistent.Read(scale2);
+            _ = _persistent.Update(paymentType, new() { Id = 1 });
+            paymentType2 = _persistent.Read(paymentType2);
 
             //Assert
-            Assert.NotEqual("Comision 2", scale2.Name);
+            Assert.NotEqual("Nequi", paymentType2.Name);
         }
 
         /// <summary>
-        /// Prueba la actualización de una escala con error
+        /// Prueba la actualización de un tipo de pago con error
         /// </summary>
         [Fact]
         public void UpdateWithErrorTest()
         {
             //Act, Assert
-            Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 1 }));
+            Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 0 }));
         }
 
         /// <summary>
-        /// Prueba la eliminación de una escala
+        /// Prueba la eliminación de un tipo de pago
         /// </summary>
         [Fact]
         public void DeleteTest()
         {
             //Arrange
-            Scale scale = new() { Id = 3 };
-            Scale scale2 = new() { Id = 3 };
+            PaymentType paymentType = new() { Id = 3 };
+            PaymentType paymentType2 = new() { Id = 3 };
 
             //Act
-            _ = _persistent.Delete(scale, new() { Id = 1 });
-            scale2 = _persistent.Read(scale2);
+            _ = _persistent.Delete(paymentType, new() { Id = 1 });
+            paymentType2 = _persistent.Read(paymentType2);
 
             //Assert
-            Assert.Equal(0, scale2.Id);
+            Assert.Equal(0, paymentType2.Id);
         }
 
         /// <summary>
-        /// Prueba la eliminación de una escala con error
+        /// Prueba la eliminación de un tipo de pago con error
         /// </summary>
         [Fact]
         public void DeleteWithErrorTest()
         {
             //Act, Assert
-            Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 1 }));
+            Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 0 }));
         }
         #endregion
     }

@@ -30,6 +30,7 @@ namespace Dal.Test.Config
         /// </summary>
         public CityTest()
         {
+            //Arrange
             _configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, false)
                 .AddEnvironmentVariables()
@@ -45,8 +46,10 @@ namespace Dal.Test.Config
         [Fact]
         public void ListTest()
         {
+            //Act
             ListResult<City> list = _persistent.List("idcountry = 1", "idcountry", 1, 0);
 
+            //Assert
             Assert.NotEmpty(list.List);
             Assert.True(list.Total > 0);
         }
@@ -57,6 +60,7 @@ namespace Dal.Test.Config
         [Fact]
         public void ListWithErrorTest()
         {
+            //Act, Assert
             Assert.Throws<PersistentException>(() => _persistent.List("idpais = 1", "name", 1, 0));
         }
 
@@ -66,9 +70,13 @@ namespace Dal.Test.Config
         [Fact]
         public void ReadTest()
         {
+            //Arrange
             City city = new() { Id = 1 };
+
+            //Act
             city = _persistent.Read(city);
 
+            //Assert
             Assert.Equal("BOG", city.Code);
         }
 
@@ -78,10 +86,24 @@ namespace Dal.Test.Config
         [Fact]
         public void ReadNotFoundTest()
         {
+            //Arrange
             City city = new() { Id = 10 };
+
+            //Act
             city = _persistent.Read(city);
 
+            //Assert
             Assert.Equal(0, city.Id);
+        }
+
+        /// <summary>
+        /// Prueba la consulta de una ciudad con error
+        /// </summary>
+        [Fact]
+        public void ReadWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Read(null));
         }
 
         /// <summary>
@@ -90,9 +112,13 @@ namespace Dal.Test.Config
         [Fact]
         public void InsertTest()
         {
+            //Arrange
             City city = new() { Country = new() { Id = 1 }, Code = "BUC", Name = "Bucaramanga" };
+
+            //Act
             city = _persistent.Insert(city, new() { Id = 1 });
 
+            //Assert
             Assert.NotEqual(0, city.Id);
         }
 
@@ -102,8 +128,10 @@ namespace Dal.Test.Config
         [Fact]
         public void InsertDuplicateTest()
         {
+            //Arrange
             City city = new() { Country = new() { Id = 1 }, Code = "BOG", Name = "Prueba 1" };
 
+            //Act, Assert
             _ = Assert.Throws<PersistentException>(() => _persistent.Insert(city, new() { Id = 1 }));
         }
 
@@ -113,13 +141,26 @@ namespace Dal.Test.Config
         [Fact]
         public void UpdateTest()
         {
+            //Arrange
             City city = new() { Id = 2, Country = new() { Id = 1 }, Code = "BAQ", Name = "Barranquilla" };
-            _ = _persistent.Update(city, new() { Id = 1 });
-
             City country2 = new() { Id = 2 };
+
+            //Act
+            _ = _persistent.Update(city, new() { Id = 1 });
             country2 = _persistent.Read(country2);
 
+            //Assert
             Assert.NotEqual("MED", country2.Code);
+        }
+
+        /// <summary>
+        /// Prueba la actualización de una ciudad con error
+        /// </summary>
+        [Fact]
+        public void UpdateWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Update(null, new() { Id = 1 }));
         }
 
         /// <summary>
@@ -128,13 +169,26 @@ namespace Dal.Test.Config
         [Fact]
         public void DeleteTest()
         {
+            //Arrange
             City city = new() { Id = 3 };
-            _ = _persistent.Delete(city, new() { Id = 1 });
-
             City city2 = new() { Id = 3 };
+
+            //Act
+            _ = _persistent.Delete(city, new() { Id = 1 });
             city2 = _persistent.Read(city2);
 
+            //Assert
             Assert.Equal(0, city2.Id);
+        }
+
+        /// <summary>
+        /// Prueba la eliminación de una ciudad con error
+        /// </summary>
+        [Fact]
+        public void DeleteWithErrorTest()
+        {
+            //Act, Assert
+            Assert.Throws<PersistentException>(() => _persistent.Delete(null, new() { Id = 1 }));
         }
         #endregion
     }

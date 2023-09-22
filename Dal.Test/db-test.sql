@@ -662,3 +662,88 @@ FROM
 INSERT INTO registration_scale (idregistration, idscale, idaccountexecutive) VALUES (1, 1, 1);
 INSERT INTO registration_scale (idregistration, idscale, idaccountexecutive) VALUES (1, 1, 2);
 INSERT INTO registration_scale (idregistration, idscale, idaccountexecutive) VALUES (1, 2, 1);
+
+/* Crear tabla de cuotas de una matrícula */
+CREATE TABLE fee (
+  idfee INT NOT NULL AUTO_INCREMENT,
+  idregistration INT NOT NULL,
+  value FLOAT NOT NULL,
+  number SMALLINT NOT NULL,
+  idincometype INT NOT NULL,
+  dueDate DATE NOT NULL,
+  PRIMARY KEY (idfee),
+  UNIQUE KEY UK_fee (idregistration, number, idincometype),
+  INDEX FK_fee_registration_idx (idregistration ASC),
+  INDEX FK_fee_income_type_idx (idincometype ASC),
+  CONSTRAINT FK_fee_registration FOREIGN KEY (idregistration) REFERENCES registration (idregistration) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT FK_fee_income_type FOREIGN KEY (idincometype) REFERENCES income_type (idincometype) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+/* Crear vista de cuotas de una matrícula */
+CREATE VIEW v_fee AS
+SELECT
+ f.idfee,
+ f.idregistration,
+ f.value,
+ f.number,
+ f.dueDate,
+ it.idincometype,
+ it.code AS incometype_code,
+ it.name AS incometype
+FROM
+ fee f
+ INNER JOIN income_type it ON f.idincometype = it.idincometype;
+
+/* Poblar tabla de cuotas de una matricula */
+INSERT INTO fee (idregistration, value, number, idincometype, dueDate) VALUES (1, 1000, 1, 1, CURDATE());
+INSERT INTO fee (idregistration, value, number, idincometype, dueDate) VALUES (1, 2000, 2, 1, CURDATE());
+INSERT INTO fee (idregistration, value, number, idincometype, dueDate) VALUES (1, 3000, 3, 1, CURDATE());
+
+/* Crear tabla de tipos de pago */
+CREATE TABLE payment_type (
+  idpaymenttype INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(45) NOT NULL,
+  PRIMARY KEY (idpaymenttype)
+);
+
+/* Poblar tabla de tipos de pago */
+INSERT INTO payment_type (name) VALUES ('Efectivo');
+INSERT INTO payment_type (name) VALUES ('Nequi');
+INSERT INTO payment_type (name) VALUES ('PSE');
+
+/* Crear tabla de pagos */
+CREATE TABLE payment (
+  idpayment BIGINT NOT NULL AUTO_INCREMENT,
+  idpaymenttype INT NOT NULL,
+  idfee INT NOT NULL,
+  value FLOAT NOT NULL,
+  date DATE NOT NULL,
+  invoice VARCHAR(20) NOT NULL,
+  proof VARCHAR(300) NOT NULL,
+  PRIMARY KEY (idpayment),
+  INDEX FK_payment_type_idx (idpaymenttype ASC),
+  INDEX FK_payment_fee_idx (idfee ASC),
+  CONSTRAINT FK_payment_type FOREIGN KEY (idpaymenttype) REFERENCES payment_type (idpaymenttype) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT FK_payment_fee FOREIGN KEY (idfee) REFERENCES fee (idfee) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+/* Crear vista de pagos */
+CREATE VIEW v_payment AS
+SELECT
+	p.idpayment,
+    pt.idpaymenttype,
+    pt.name AS paymenttype,
+    f.idfee,
+    p.value,
+    p.date,
+    p.invoice,
+    p.proof
+FROM
+	payment p
+    INNER JOIN payment_type pt ON p.idpaymenttype = pt.idpaymenttype
+    INNER JOIN fee f ON p.idfee = f.idfee;
+
+/* Poblar tabla de pago */
+INSERT INTO payment (idpaymenttype, idfee, value, date, invoice, proof) VALUES (1, 1, 1500, CURDATE(), '101-000001', 'http://localhost/prueba1.png');
+INSERT INTO payment (idpaymenttype, idfee, value, date, invoice, proof) VALUES (1, 1, 2500, CURDATE(), '101-000002', 'http://localhost/prueba2.png');
+INSERT INTO payment (idpaymenttype, idfee, value, date, invoice, proof) VALUES (1, 1, 3500, CURDATE(), '101-000003', 'http://localhost/prueba3.png');

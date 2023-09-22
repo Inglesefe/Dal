@@ -7,10 +7,10 @@ using Microsoft.Extensions.Configuration;
 namespace Dal.Test.Cont
 {
     /// <summary>
-    /// Realiza las pruebas sobre la clase de persistencia de números de consecutivo
+    /// Realiza las pruebas sobre la clase de persistencia de pagos
     /// </summary>
     [Collection("Tests")]
-    public class ConsecutiveNumberTest
+    public class PaymentTest
     {
         #region Attributes
         /// <summary>
@@ -19,16 +19,16 @@ namespace Dal.Test.Cont
         private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Administrador de la persistencia de los números de consecutivo
+        /// Administrador de la persistencia de los pagos
         /// </summary>
-        private readonly PersistentConsecutiveNumber _persistent;
+        private readonly PersistentPayment _persistent;
         #endregion
 
         #region Constructors
         /// <summary>
         /// Inicializa la configuración de la prueba
         /// </summary>
-        public ConsecutiveNumberTest()
+        public PaymentTest()
         {
             //Arrange
             _configuration = new ConfigurationBuilder()
@@ -41,13 +41,13 @@ namespace Dal.Test.Cont
 
         #region Methods
         /// <summary>
-        /// Prueba la consulta de un listado de números de consecutivo con filtros, ordenamientos y límite
+        /// Prueba la consulta de un listado de pagos con filtros, ordenamientos y límite
         /// </summary>
         [Fact]
         public void ListTest()
         {
             //Act
-            ListResult<ConsecutiveNumber> list = _persistent.List("idconsecutivenumber = 1", "idconsecutivenumber", 1, 0);
+            ListResult<Payment> list = _persistent.List("idpayment = 1", "value", 1, 0);
 
             //Assert
             Assert.NotEmpty(list.List);
@@ -55,49 +55,49 @@ namespace Dal.Test.Cont
         }
 
         /// <summary>
-        /// Prueba la consulta de un listado de números de consecutivo con filtros, ordenamientos y límite y con errores
+        /// Prueba la consulta de un listado de pagos con filtros, ordenamientos y límite y con errores
         /// </summary>
         [Fact]
         public void ListWithErrorTest()
         {
             //Act, Assert
-            Assert.Throws<PersistentException>(() => _persistent.List("idnumeroconsecutivo = 1", "name", 1, 0));
+            Assert.Throws<PersistentException>(() => _persistent.List("idpago = 1", "name", 1, 0));
         }
 
         /// <summary>
-        /// Prueba la consulta de un número de consecutivo dada su identificador
+        /// Prueba la consulta de un pago dada su identificador
         /// </summary>
         [Fact]
         public void ReadTest()
         {
             //Arrange
-            ConsecutiveNumber number = new() { Id = 1 };
+            Payment payment = new() { Id = 1 };
 
             //Act
-            number = _persistent.Read(number);
+            payment = _persistent.Read(payment);
 
             //Assert
-            Assert.Equal("9999999999", number.Number);
+            Assert.Equal(1500, payment.Value);
         }
 
         /// <summary>
-        /// Prueba la consulta de un número de consecutivo que no existe dado su identificador
+        /// Prueba la consulta de un pago que no existe dado su identificador
         /// </summary>
         [Fact]
         public void ReadNotFoundTest()
         {
             //Arrange
-            ConsecutiveNumber number = new() { Id = 10 };
+            Payment payment = new() { Id = 10 };
 
             //Act
-            number = _persistent.Read(number);
+            payment = _persistent.Read(payment);
 
             //Assert
-            Assert.Equal(0, number.Id);
+            Assert.Equal(0, payment.Id);
         }
 
         /// <summary>
-        /// Prueba la consulta de un número de consecutivo con error
+        /// Prueba la consulta de un pago con error
         /// </summary>
         [Fact]
         public void ReadWithErrorTest()
@@ -107,23 +107,23 @@ namespace Dal.Test.Cont
         }
 
         /// <summary>
-        /// Prueba la inserción de un número de consecutivo
+        /// Prueba la inserción de un pago
         /// </summary>
         [Fact]
         public void InsertTest()
         {
             //Arrange
-            ConsecutiveNumber number = new() { ConsecutiveType = new() { Id = 1 }, City = new() { Id = 1 }, Number = "66666666666" };
+            Payment payment = new() { PaymentType = new() { Id = 1 }, Fee = new() { Id = 1 }, Value = 4500, Date = DateTime.Now, Invoice = "101-000004", Proof = "http://localhost/prueba4.png" };
 
             //Act
-            number = _persistent.Insert(number, new() { Id = 1 });
+            payment = _persistent.Insert(payment, new() { Id = 1 });
 
             //Assert
-            Assert.NotEqual(0, number.Id);
+            Assert.NotEqual(0, payment.Id);
         }
 
         /// <summary>
-        /// Prueba la inserción de un número de consecutivo con error
+        /// Prueba la inserción de un pago con error
         /// </summary>
         [Fact]
         public void InsertWithErrorTest()
@@ -133,25 +133,25 @@ namespace Dal.Test.Cont
         }
 
         /// <summary>
-        /// Prueba la actualización de un número de consecutivo
+        /// Prueba la actualización de un pago
         /// </summary>
         [Fact]
         public void UpdateTest()
         {
             //Arrange
-            ConsecutiveNumber number = new() { Id = 2, ConsecutiveType = new() { Id = 1 }, Number = "55555555555" };
-            ConsecutiveNumber number2 = new() { Id = 2 };
+            Payment payment = new() { Id = 2, PaymentType = new() { Id = 1 }, Fee = new() { Id = 1 }, Value = 5500, Date = DateTime.Now, Invoice = "101-000005", Proof = "http://localhost/prueba5.png" };
+            Payment payment2 = new() { Id = 2 };
 
             //Act
-            _ = _persistent.Update(number, new() { Id = 1 });
-            number2 = _persistent.Read(number2);
+            _ = _persistent.Update(payment, new() { Id = 1 });
+            payment2 = _persistent.Read(payment2);
 
             //Assert
-            Assert.NotEqual("8888888888", number2.Number);
+            Assert.NotEqual(2500, payment2.Value);
         }
 
         /// <summary>
-        /// Prueba la actualización de un número de consecutivo con error
+        /// Prueba la actualización de un pago con error
         /// </summary>
         [Fact]
         public void UpdateWithErrorTest()
@@ -161,25 +161,25 @@ namespace Dal.Test.Cont
         }
 
         /// <summary>
-        /// Prueba la eliminación de un número de consecutivo
+        /// Prueba la eliminación de un pago
         /// </summary>
         [Fact]
         public void DeleteTest()
         {
             //Arrange
-            ConsecutiveNumber number = new() { Id = 3 };
-            ConsecutiveNumber number2 = new() { Id = 3 };
+            Payment payment = new() { Id = 3 };
+            Payment payment2 = new() { Id = 3 };
 
             //Act
-            _ = _persistent.Delete(number, new() { Id = 1 });
-            number2 = _persistent.Read(number2);
+            _ = _persistent.Delete(payment, new() { Id = 1 });
+            payment2 = _persistent.Read(payment2);
 
             //Assert
-            Assert.Equal(0, number2.Id);
+            Assert.Equal(0, payment2.Id);
         }
 
         /// <summary>
-        /// Prueba la eliminación de un número de consecutivo con error
+        /// Prueba la eliminación de un pago con error
         /// </summary>
         [Fact]
         public void DeleteWithErrorTest()
