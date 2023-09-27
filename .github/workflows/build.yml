@@ -12,6 +12,7 @@ jobs:
       solution: Dal
       version: 1.0.${{ github.run_number }}
       versionSuffix: ${{ github.ref_name }}
+      username: leandrobaena@gmail.com
     steps:
 
     - name: Setup Java 17
