@@ -12,8 +12,9 @@ namespace Dal
     /// <summary>
     /// Mapeo de las propiedades delas entidades con los campos de base de datos
     /// </summary>
-    public static class Mapping
+    public static class MappingExtensions
     {
+        #region Methods
         /// <summary>
         /// Mapeos de la entidad AccountExecutive
         /// </summary>
@@ -558,5 +559,6 @@ namespace Dal
                 _ => null,
             };
         }
+        #endregion
     }
 }

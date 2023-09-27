@@ -1,14 +1,12 @@
 ﻿using Dal.Dto;
-using Dapper;
 using Entities;
-using Entities.Log;
 
 namespace Dal
 {
     /// <summary>
     /// Clase base de la jerarquía de persistencias de entidades
     /// </summary>
-    public abstract class PersistentBase<T> : IPersistent<T> where T : IEntity
+    public abstract class PersistentBase<T> : IPersistent<T> where T : Entity
     {
         #region Attributes
         /// <summary>
@@ -25,8 +23,7 @@ namespace Dal
         protected PersistentBase(string connString)
         {
             _connString = connString;
-            SqlMapper.SetTypeMap(typeof(LogComponent), new CustomPropertyTypeMap(typeof(LogComponent), (type, columnName) => new LogComponent().GetMapping(columnName)));
-            SqlMapper.SetTypeMap(typeof(LogDb), new CustomPropertyTypeMap(typeof(LogDb), (type, columnName) => new LogDb().GetMapping(columnName)));
+            Mapper.GetInstance();
         }
         #endregion
 
