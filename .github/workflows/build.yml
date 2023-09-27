@@ -47,6 +47,9 @@ jobs:
     - name: Inicializar SonarQube
       run: ./.sonar/scanner/dotnet-sonarscanner begin /k:"Inglesefe_Dal" /o:"inglesefe" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
 
+    - name: Adicionar repositorio
+      run: dotnet nuget add source --username ${{ env.username }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/inglesefe/index.json"
+
     - name: Compilar la solución
       run: dotnet build ${{ env.solution }}.sln -c Debug
 
