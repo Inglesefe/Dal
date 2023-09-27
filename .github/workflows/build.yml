@@ -54,6 +54,9 @@ jobs:
     - name: Compilar la solución
       run: dotnet build ${{ env.solution }}.sln -c Debug
 
+    - name: Habilitar MySQL
+      run: sudo systemctl start mysql.service
+
     - name: Crear base de datos de prueba
       run: mysql -h localhost -P 3306 -u root -proot < "${{ github.workspace }}/${{ env.solution }}.Test/db-test.sql"
 
