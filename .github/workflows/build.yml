@@ -55,7 +55,7 @@ jobs:
       run: dotnet build ${{ env.solution }}.sln -c Debug
 
     - name: Crear base de datos de prueba
-      run: mysql -h localhost -P 3306 -u root -proot < "${{ github.workspace }}\${{ env.solution }}.Test\db-test.sql"
+      run: mysql -h localhost -P 3306 -u root -proot < "${{ github.workspace }}/${{ env.solution }}.Test/db-test.sql"
 
     - name: Ejecutar pruebas unitarias
       run: |
