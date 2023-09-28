@@ -13,6 +13,7 @@ jobs:
       version: 1.0.${{ github.run_number }}
       versionSuffix: ${{ github.ref_name }}
       username: leandrobaena@gmail.com
+      ConnectionStrings__golden: Server=localhost; User ID=root; Password=root; Database=test;
     steps:
 
     - name: Setup Java 17
