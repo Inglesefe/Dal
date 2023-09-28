@@ -31,7 +31,7 @@ namespace Dal
                 "accountexecutive" => type.GetProperty("Name"),
                 "identification" => type.GetProperty("Identification"),
                 "account_executive_identification" => type.GetProperty("Identification"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -49,7 +49,7 @@ namespace Dal
                 "idregistration" => type.GetProperty("Id"),
                 "date" => type.GetProperty("Date"),
                 "contract_number" => type.GetProperty("ContractNumber"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -67,7 +67,7 @@ namespace Dal
                 "idapplication" => type.GetProperty("Id"),
                 "name" => type.GetProperty("Name"),
                 "application" => type.GetProperty("Name"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -85,7 +85,7 @@ namespace Dal
                 "idrole" => type.GetProperty("Id"),
                 "name" => type.GetProperty("Name"),
                 "role" => type.GetProperty("Name"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -105,7 +105,7 @@ namespace Dal
                 "user" => type.GetProperty("Name"),
                 "login" => type.GetProperty("Login"),
                 "active" => type.GetProperty("Active"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -129,7 +129,7 @@ namespace Dal
                 "city_name" => type.GetProperty("Name"),
                 "office_city_name" => type.GetProperty("Name"),
                 "city" => type.GetProperty("Name"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -152,7 +152,7 @@ namespace Dal
                 "country_name" => type.GetProperty("Name"),
                 "office_country_name" => type.GetProperty("Name"),
                 "name" => type.GetProperty("Name"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -178,7 +178,7 @@ namespace Dal
                 "owner_identificationtype" => type.GetProperty("Name"),
                 "account_executive_identificationtype" => type.GetProperty("Name"),
                 "name" => type.GetProperty("Name"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -198,7 +198,7 @@ namespace Dal
                 "incometype_code" => type.GetProperty("Code"),
                 "name" => type.GetProperty("Name"),
                 "incometype" => type.GetProperty("Name"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -218,7 +218,7 @@ namespace Dal
                 "office" => type.GetProperty("Name"),
                 "address" => type.GetProperty("Address"),
                 "office_address" => type.GetProperty("Address"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -236,7 +236,7 @@ namespace Dal
                 "idparameter" => type.GetProperty("Id"),
                 "name" => type.GetProperty("Name"),
                 "value" => type.GetProperty("Value"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -264,7 +264,7 @@ namespace Dal
                 "plan_active" => type.GetProperty("Active"),
                 "description" => type.GetProperty("Description"),
                 "plan_description" => type.GetProperty("Description"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -288,7 +288,7 @@ namespace Dal
                 "scale_comission" => type.GetProperty("Comission"),
                 "order" => type.GetProperty("Order"),
                 "scale_order" => type.GetProperty("Order"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -305,7 +305,7 @@ namespace Dal
             {
                 "idaccountnumber" => type.GetProperty("Id"),
                 "number" => type.GetProperty("Number"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -323,7 +323,7 @@ namespace Dal
                 "idaccounttype" => type.GetProperty("Id"),
                 "name" => type.GetProperty("Name"),
                 "accounttype" => type.GetProperty("Name"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -340,7 +340,7 @@ namespace Dal
             {
                 "idconsecutivenumber" => type.GetProperty("Id"),
                 "number" => type.GetProperty("Number"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -358,7 +358,7 @@ namespace Dal
                 "idconsecutivetype" => type.GetProperty("Id"),
                 "name" => type.GetProperty("Name"),
                 "consecutivetype" => type.GetProperty("Name"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -385,7 +385,7 @@ namespace Dal
                 "relationship" => type.GetProperty("Relationship"),
                 "beneficiary1_relationship" => type.GetProperty("Relationship"),
                 "beneficiary2_relationship" => type.GetProperty("Relationship"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -415,7 +415,7 @@ namespace Dal
                 "owner_phone_office" => type.GetProperty("PhoneOffice"),
                 "email" => type.GetProperty("Email"),
                 "owner_email" => type.GetProperty("Email"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -436,7 +436,7 @@ namespace Dal
                 "subject" => type.GetProperty("Subject"),
                 "content" => type.GetProperty("Content"),
                 "iduser" => type.GetProperty("User"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -454,7 +454,7 @@ namespace Dal
                 "idtemplate" => type.GetProperty("Id"),
                 "name" => type.GetProperty("Name"),
                 "content" => type.GetProperty("Content"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -476,7 +476,7 @@ namespace Dal
                 "table" => type.GetProperty("Table"),
                 "sql" => type.GetProperty("Sql"),
                 "iduser" => type.GetProperty("User"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -499,7 +499,7 @@ namespace Dal
                 "input" => type.GetProperty("Input"),
                 "output" => type.GetProperty("Output"),
                 "iduser" => type.GetProperty("User"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -518,7 +518,7 @@ namespace Dal
                 "value" => type.GetProperty("Value"),
                 "number" => type.GetProperty("Number"),
                 "dueDate" => type.GetProperty("DueDate"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -536,7 +536,7 @@ namespace Dal
                 "idpaymenttype" => type.GetProperty("Id"),
                 "name" => type.GetProperty("Name"),
                 "paymenttype" => type.GetProperty("Name"),
-                _ => null,
+                _ => null
             };
         }
 
@@ -556,7 +556,7 @@ namespace Dal
                 "date" => type.GetProperty("Date"),
                 "invoice" => type.GetProperty("Invoice"),
                 "proof" => type.GetProperty("Proof"),
-                _ => null,
+                _ => null
             };
         }
         #endregion
