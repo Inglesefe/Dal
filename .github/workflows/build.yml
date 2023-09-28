@@ -66,6 +66,9 @@ jobs:
         dotnet tool install --global dotnet-coverage
         dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
 
+    - name: Finalizar SonarQube
+      run: ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
     - name: Crear el paquete Nuget
       if: ${{ github.ref_name == 'dev' || github.ref_name == 'test' }}
       run: dotnet pack -c Release -p:PackageVersion=${{ env.version }}-${{ env.versionSuffix }} ${{ env.solution }}.sln
