@@ -6,7 +6,7 @@ namespace Dal
     /// <summary>
     /// Define los métodos que debe tener toda persistencia de lectura
     /// </summary>
-    public interface IPersistentRead<T> where T : IEntity
+    public interface IPersistentRead<T> where T : Entity
     {
         /// <summary>
         /// Trae un listado de registros aplicando filtros, ordenamientos y límites de registros a traer

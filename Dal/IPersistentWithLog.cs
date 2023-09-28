@@ -6,7 +6,7 @@ namespace Dal
     /// <summary>
     /// Define los métodos que debe tener toda persistencia
     /// </summary>
-    public interface IPersistentWithLog<T> : IPersistentRead<T> where T : IEntity
+    public interface IPersistentWithLog<T> : IPersistentRead<T> where T : Entity
     {
         /// <summary>
         /// Inserta una entidad en la base de datos
