@@ -88,7 +88,7 @@ namespace Dal.Log
             try
             {
                 using IDbConnection connection = new MySqlConnection(_connString);
-                entity.Id = connection.QuerySingle<long>(
+                entity.Id = connection.QuerySingle<int>(
                     "INSERT INTO log_component (date, type, controller, method, input, output, iduser) VALUES (NOW(), @Type, @Controller, @Method, @Input, @Output, @User); SELECT LAST_INSERT_ID();",
                     entity);
                 return entity;

@@ -7,7 +7,7 @@ namespace Dal.Dto
     /// con múltiples registros y a la cual se le aplicaron límites de registros
     /// a retornar
     /// </summary>
-    public class ListResult<T> where T : IEntity
+    public class ListResult<T> where T : Entity
     {
         #region Attributes
         /// <summary>
